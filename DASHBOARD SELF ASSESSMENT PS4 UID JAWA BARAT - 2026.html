@@ -1,0 +1,1186 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dashboard Self Assessment PS4 — UID Jawa Barat</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%230F2A47'/%3E%3Ctext x='50' y='67' font-size='50' text-anchor='middle' fill='%23F2B705' font-family='Segoe UI,Arial,sans-serif' font-weight='700'%3EP4%3C/text%3E%3C/svg%3E">
+<style>
+  :root{
+    --navy:#0F2A47;
+    --navy-2:#173a5e;
+    --gold:#F2B705;
+    --bg:#F5F7FA;
+    --card:#FFFFFF;
+    --line:#E3E8EF;
+    --text:#1B2733;
+    --muted:#6B7A8D;
+    --green:#1D9A6C;
+    --amber:#E0A100;
+    --red:#D6473C;
+    --radius:10px;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--bg);
+    font-family:"Segoe UI",Inter,system-ui,sans-serif;
+    color:var(--text);
+    font-size:14px;
+  }
+  .wrap{max-width:1180px;margin:0 auto;padding:20px;}
+
+  /* ---- Top bar ---- */
+  .topbar{
+    display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;
+    background:var(--navy);color:#fff;padding:16px 22px;border-radius:var(--radius);
+    margin-bottom:16px;
+  }
+  .topbar h1{font-size:17px;margin:0;font-weight:700;letter-spacing:.2px;}
+  .topbar .sub{font-size:11.5px;color:#C9D6E3;margin-top:2px;font-weight:400;}
+  .filters{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+  .filters select{
+    background:var(--navy-2);color:#fff;border:1px solid #2c5079;
+    border-radius:6px;padding:7px 10px;font-size:12.5px;
+  }
+  .refresh-btn{
+    background:var(--gold);color:#3a2c00;border:none;border-radius:6px;padding:7px 12px;
+    font-size:12.5px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:5px;
+  }
+  .refresh-btn:hover{filter:brightness(1.06);}
+  .refresh-btn:disabled{opacity:.6;cursor:default;}
+  .spin{display:inline-block;animation:spin 1s linear infinite;}
+  @keyframes spin{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
+
+  /* ---- Annotation chips ---- */
+  .note{
+    display:inline-block;background:#FFF4D6;color:#7A5A00;border:1px dashed #E0B84A;
+    font-size:10.5px;padding:2px 7px;border-radius:5px;margin-left:6px;font-weight:600;
+    vertical-align:middle;cursor:pointer;
+  }
+
+  /* ---- status / error banners ---- */
+  .banner{
+    border-radius:var(--radius);padding:10px 16px;font-size:12.5px;margin-bottom:14px;
+    display:none;align-items:center;gap:8px;
+  }
+  .banner.show{display:flex;}
+  .banner.error{background:#FBE4E1;color:#8a2a20;border:1px solid #f0b8b0;}
+  .banner.info{background:#EAF1FB;color:var(--navy-2);border:1px solid #cfe0f5;}
+  .banner button{
+    margin-left:auto;background:none;border:1px solid currentColor;border-radius:5px;
+    padding:4px 10px;font-size:11.5px;cursor:pointer;color:inherit;
+  }
+
+  /* ---- KPI row ---- */
+  .kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px;}
+  .kpi{
+    background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:14px 16px;position:relative;
+  }
+  .kpi .label{font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.4px;}
+  .kpi .value{font-size:26px;font-weight:800;color:var(--navy);margin-top:4px;font-variant-numeric:tabular-nums;}
+  .kpi .delta{font-size:11.5px;margin-top:3px;font-weight:600;color:var(--muted);}
+  .up{color:var(--green)!important;} .down{color:var(--red)!important;}
+  .kpi.gold{border-top:3px solid var(--gold);}
+  .kpi.blue{border-top:3px solid var(--navy);}
+  .kpi.green{border-top:3px solid var(--green);}
+  .kpi.red{border-top:3px solid var(--red);}
+
+  /* ---- Panel layout ---- */
+  .grid{display:grid;grid-template-columns:1.55fr 1fr;gap:14px;margin-bottom:14px;}
+  .panel{
+    background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:16px;
+  }
+  .panel h2{font-size:13px;margin:0 0 3px 0;font-weight:700;color:var(--navy);}
+  .panel .desc{font-size:11px;color:var(--muted);margin-bottom:12px;}
+
+  /* ---- Heatmap table ---- */
+  .table-scroll{overflow-x:auto;}
+  table{width:100%;border-collapse:collapse;font-size:12px;min-width:520px;}
+
+  /* ---- Compact variant (used for side-by-side UP3 summary table) ---- */
+  .table-compact{overflow-x:visible;}
+  .table-compact table{font-size:9px;min-width:0;table-layout:fixed;}
+  .table-compact .unit-name{font-size:8.5px;line-height:1.2;}
+  .table-compact th{
+    font-size:8px;padding:5px 1px;white-space:nowrap;overflow:hidden;
+    text-overflow:ellipsis;letter-spacing:0;text-align:center;
+  }
+  .table-compact th:first-child{text-align:left;}
+  .table-compact td{padding:4px 1px;white-space:normal;overflow-wrap:anywhere;text-align:center;}
+  .table-compact .score{min-width:0;padding:1px 2px;font-size:9px;}
+  .table-compact .stars{font-size:7px;letter-spacing:-0.5px;white-space:nowrap;}
+  .table-compact th:nth-child(1),.table-compact td:nth-child(1){width:19%;text-align:left;overflow-wrap:break-word;hyphens:auto;}
+  .table-compact th:nth-child(2),.table-compact td:nth-child(2){width:8%;}
+  .table-compact th:nth-child(3),.table-compact td:nth-child(3),
+  .table-compact th:nth-child(4),.table-compact td:nth-child(4),
+  .table-compact th:nth-child(5),.table-compact td:nth-child(5),
+  .table-compact th:nth-child(6),.table-compact td:nth-child(6){width:8.5%;}
+  .table-compact th:nth-child(7),.table-compact td:nth-child(7),
+  .table-compact th:nth-child(8),.table-compact td:nth-child(8),
+  .table-compact th:nth-child(9),.table-compact td:nth-child(9){width:8%;}
+  .table-compact th:nth-child(10),.table-compact td:nth-child(10){width:15%;white-space:nowrap;}
+  th{
+    text-align:left;color:var(--muted);font-weight:600;font-size:10.5px;
+    text-transform:uppercase;letter-spacing:.3px;padding:6px 8px;border-bottom:2px solid var(--line);
+    cursor:pointer;user-select:none;white-space:nowrap;
+  }
+  th:hover{color:var(--navy-2);}
+  th .arrow{font-size:9px;margin-left:2px;}
+  td{padding:7px 8px;border-bottom:1px solid var(--line);white-space:nowrap;}
+  tr.up3row td{background:#EEF2F7;font-weight:700;color:var(--navy-2);}
+  .score{
+    display:inline-block;min-width:30px;text-align:center;border-radius:5px;padding:2px 6px;
+    font-weight:700;font-variant-numeric:tabular-nums;
+  }
+  .s-hi{background:#E4F6ED;color:var(--green);}
+  .s-mid{background:#FFF3D6;color:var(--amber);}
+  .s-lo{background:#ECEDEF;color:#1B1B1B;}
+  .s-na{color:#C3CCD6;background:transparent;}
+  .stars{letter-spacing:1px;font-size:12px;font-weight:700;}
+  .stars.hi{color:var(--green);}
+  .stars.mid{color:var(--amber);}
+  .stars.lo{color:#1B1B1B;}
+  .stars.na{color:#C3CCD6;font-weight:400;}
+  .unit-name{color:var(--text);}
+  .unit-name.child{padding-left:14px;color:var(--muted);}
+  .empty-row td{color:#C3CCD6;}
+
+  /* ---- Bar chart (aspect comparison) ---- */
+  .bar-row{display:flex;align-items:center;gap:8px;margin-bottom:9px;}
+  .bar-label{width:78px;font-size:11px;color:var(--muted);flex-shrink:0;}
+  .bar-track{flex:1;background:#EEF1F5;border-radius:5px;height:14px;overflow:hidden;}
+  .bar-fill{height:100%;border-radius:5px;background:var(--navy);transition:width .4s ease;}
+  .bar-val{width:32px;text-align:right;font-size:11px;font-weight:700;color:var(--navy);font-variant-numeric:tabular-nums;}
+
+  /* ---- Donut (star distribution) ---- */
+  .donut-wrap{display:flex;align-items:center;gap:16px;flex-wrap:wrap;}
+  .legend{font-size:11.5px;}
+  .legend div{display:flex;align-items:center;gap:6px;margin-bottom:6px;}
+  .dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
+
+  /* ---- Trend line (mini svg) ---- */
+  .trend-caption{font-size:11px;color:var(--muted);margin-top:6px;}
+
+  footer{
+    text-align:center;font-size:10.5px;color:var(--muted);padding:14px 0 4px;
+  }
+  footer a{color:var(--navy-2);}
+
+  .skeleton{
+    background:linear-gradient(90deg,#eef1f5 25%,#e4e9ef 37%,#eef1f5 63%);
+    background-size:400% 100%;animation:shimmer 1.4s ease infinite;border-radius:6px;
+  }
+  @keyframes shimmer{0%{background-position:100% 0;}100%{background-position:0 0;}}
+
+  /* ---- Export PDF button + popup pilihan bagian ---- */
+  .export-btn{
+    background:#fff;color:var(--navy);border:none;border-radius:6px;padding:7px 12px;
+    font-size:12.5px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:5px;
+  }
+  .export-btn:hover{filter:brightness(0.96);}
+  .export-popup{
+    display:none;position:absolute;right:0;top:calc(100% + 8px);z-index:20;
+    background:#fff;color:var(--text);border:1px solid var(--line);border-radius:8px;
+    padding:12px 14px;width:230px;box-shadow:0 6px 18px rgba(15,42,71,0.18);
+  }
+  .export-popup.show{display:block;}
+  .export-popup-title{font-size:11.5px;font-weight:700;color:var(--navy);margin-bottom:8px;}
+  .export-popup label{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--text);margin-bottom:7px;cursor:pointer;}
+  .export-popup input[type="checkbox"]{margin:0;flex-shrink:0;}
+  .export-popup-actions{display:flex;justify-content:flex-end;gap:6px;margin-top:6px;}
+  .export-popup-actions button{
+    border:1px solid var(--line);background:var(--bg);color:var(--text);border-radius:5px;
+    padding:5px 10px;font-size:11.5px;font-weight:700;cursor:pointer;
+  }
+  .export-popup-actions button:last-child{background:var(--navy);color:#fff;border-color:var(--navy);}
+
+  /* ---- Cetak / Export PDF (lewat dialog print browser) ---- */
+  @media print{
+    body{background:#fff;}
+    .wrap{max-width:100%;padding:8px;}
+    .filters select, #refreshBtn, #exportPdfBtn, .refresh-btn, .export-btn, .export-popup{display:none !important;}
+    .banner{display:none !important;}
+    .grid{grid-template-columns:1fr;}
+    .panel, .kpi, .topbar, table{break-inside:avoid;page-break-inside:avoid;}
+    .print-hide{display:none !important;}
+    *{
+      -webkit-print-color-adjust:exact !important;
+      print-color-adjust:exact !important;
+      color-adjust:exact !important;
+    }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="topbar">
+    <div>
+      <h1>Monitoring PS4 — Penampilan · Sikap · Senyum · Salam · Sapa</h1>
+      <div class="sub" id="subLabel">Memuat…</div>
+    </div>
+    <div class="filters">
+      <select id="up3Filter"><option value="">Semua UP3</option></select>
+      <select id="bulanFilter"><option value="">Memuat bulan…</option></select>
+      <button class="refresh-btn" id="refreshBtn" onclick="manualRefresh()">⟳ Refresh</button>
+      <div style="position:relative;">
+        <button class="export-btn" id="exportPdfBtn" onclick="toggleExportPopup()">⬇ Export PDF</button>
+        <div class="export-popup" id="exportPopup">
+          <div class="export-popup-title">Sertakan di PDF:</div>
+          <label><input type="checkbox" class="exportChk" data-target="panelSkorUnit" checked> Skor per Unit (tabel heatmap)</label>
+          <label><input type="checkbox" class="exportChk" data-target="panelAspek" checked> Rata-rata per Aspek PS4</label>
+          <label><input type="checkbox" class="exportChk" data-target="panelDonut" checked> Distribusi Status Bintang</label>
+          <label><input type="checkbox" class="exportChk" data-target="panelUp3Summary" checked> Rata-rata per UP3</label>
+          <label><input type="checkbox" class="exportChk" data-target="panelTrend" checked> Tren Skor &amp; Realisasi</label>
+          <div class="export-popup-actions">
+            <button type="button" onclick="closeExportPopup()">Batal</button>
+            <button type="button" onclick="confirmExportPdf()">⬇ Export</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="banner error" id="errorBanner">
+    <span>⚠ Gagal memuat data dari Google Sheet. Periksa koneksi internet, dan pastikan sheet masih bisa diakses ("Anyone with the link").</span>
+    <button onclick="manualRefresh()">Coba lagi</button>
+  </div>
+  <div class="banner info" id="infoBanner">
+    <span id="infoBannerText"></span>
+    <button onclick="document.getElementById('infoBanner').classList.remove('show')">Tutup</button>
+  </div>
+
+  <div class="kpi-row" id="kpiRow">
+    <div class="kpi blue">
+      <div class="label">Target ULP Dinilai</div>
+      <div class="value skeleton" id="kpiTarget">&nbsp;</div>
+      <div class="delta" id="kpiTargetDesc">Jumlah unit dalam cakupan</div>
+    </div>
+    <div class="kpi red">
+      <div class="label">Realisasi Input</div>
+      <div class="value skeleton" id="kpiRealisasi">&nbsp;</div>
+      <div class="delta" id="kpiRealisasiDesc">&nbsp;</div>
+    </div>
+    <div class="kpi gold">
+      <div class="label">Avg Skor Penerapan PS4</div>
+      <div class="value skeleton" id="kpiAvg">&nbsp;</div>
+      <div class="delta" id="kpiAvgDesc">dari unit yang sudah terisi</div>
+    </div>
+    <div class="kpi green">
+      <div class="label" id="kpiTopLabel">Unit Bintang 5 (≥90)</div>
+      <div class="value skeleton" id="kpiTop">&nbsp;</div>
+      <div class="delta" id="kpiTopDesc">&nbsp;</div>
+    </div>
+  </div>
+
+  <div class="grid">
+    <div class="panel" id="panelSkorUnit">
+      <h2>Skor per Unit
+        <span class="note" id="sortResetNote" onclick="resetSort()" style="display:none;">reset urutan / grouping</span>
+      </h2>
+      <div class="desc"> hijau <span class="stars hi" style="font-size:11px;">★★★★★</span> (≥90), kuning <span class="stars mid" style="font-size:11px;">★★★/★★★★</span> (80–89), hitam <span class="stars lo" style="font-size:11px;">★/★★</span> (&lt;80).</div>
+      <div class="table-scroll">
+      <table>
+        <thead>
+          <tr id="tableHeadRow">
+            <th data-key="name">UP3 / ULP</th>
+            <th data-key="frontliner">Frontliner</th>
+            <th data-key="security">Security</th>
+            <th data-key="yantek">Yantek</th>
+            <th data-key="billman">Billman</th>
+            <th data-key="p2tl">P2TL</th>
+            <th data-key="yanbung">Yanbung</th>
+            <th data-key="avg">Avg</th>
+            <th data-key="status">Status</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody">
+          <tr><td colspan="9" class="skeleton" style="height:22px;"></td></tr>
+        </tbody>
+      </table>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:14px;">
+      <div class="panel" id="panelAspek">
+        <h2>Rata-rata per Aspek PS4</h2>
+        <div class="desc">6 komponen penilaian &amp; Bulan).</div>
+        <div id="barChart">
+          <div class="bar-row"><div class="bar-label">Frontliner</div><div class="bar-track"><div class="bar-fill" style="width:0%;"></div></div><div class="bar-val">–</div></div>
+        </div>
+      </div>
+
+      <div class="panel" id="panelDonut">
+        <h2>Distribusi Status Bintang</h2>
+        <div class="desc">Sebaran unit berdasarkan skor rata-rata akhir </div>
+        <div class="donut-wrap">
+          <svg width="90" height="90" viewBox="0 0 42 42" id="donutSvg">
+            <circle cx="21" cy="21" r="15.9" fill="transparent" stroke="#EEF1F5" stroke-width="6"></circle>
+          </svg>
+          <div class="legend" id="donutLegend"></div>
+        </div>
+      </div>
+
+      <div class="panel" id="panelUp3Summary">
+        <h2>Rata-rata per UP3 <span class="note">semua UP3 </span></h2>
+        <div class="desc">Ringkasan agregat tiap UP3 per indikator PS4.</div>
+        <div class="table-scroll table-compact">
+        <table>
+          <thead>
+            <tr id="up3SummaryHead">
+              <th data-key="name">UP3</th>
+              <th data-key="realisasi" title="Realisasi">R</th>
+              <th data-key="frontliner" title="Frontliner">FL</th>
+              <th data-key="security" title="Security">SC</th>
+              <th data-key="yantek" title="Yantek">YT</th>
+              <th data-key="billman" title="Billman">BM</th>
+              <th data-key="p2tl" title="P2TL">P2</th>
+              <th data-key="yanbung" title="Yanbung">YB</th>
+              <th data-key="avg" title="Avg">Av</th>
+              <th data-key="status" title="Status">St</th>
+            </tr>
+          </thead>
+          <tbody id="up3SummaryBody">
+            <tr><td colspan="10" class="skeleton" style="height:18px;"></td></tr>
+          </tbody>
+        </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel" id="panelTrend">
+    <h2>Tren Skor PS4 &amp; Realisasi <span class="note">hasil input Self Assessment PS4 UID Jawa Barat 2026</span></h2>
+    <div id="trendChartWrap">
+      <svg width="100%" height="130" viewBox="0 0 1100 130" preserveAspectRatio="none" id="trendSvg"></svg>
+    </div>
+    <div class="trend-caption" id="trendCaption">Memuat riwayat lokal…</div>
+  </div>
+
+  <footer id="footerNote">Data input Google Form Self Assessment PS4. Warna sel/bintang: hijau <span class="stars hi" style="font-size:10.5px;">★★★★★</span> (≥90) · kuning <span class="stars mid" style="font-size:10.5px;">★★★–★★★★</span> (80–89) · hitam <span class="stars lo" style="font-size:10.5px;">★–★★</span> (&lt;80) · Auto-refresh setiap 5 menit · <span style="opacity:.55;">— versi file: 2026-08-27.v13</span></footer>
+</div>
+
+<script>
+// ============ CONFIG ============
+var SHEET_ID = '1aqbEcH-9sH7pUKcgAtutX-FDWm3mnpa6pTnRNkNmc5w';
+var SHEET_NAME_REKAP = 'REKAP SKOR';   // master daftar 92 unit (UP3/ULP)
+var SHEET_NAME_DATA  = 'DATA SKOR';    // riwayat skor per bulan (MONTH_KEY,BULAN,UP3,ULP,...)
+var AUTO_REFRESH_MS = 5 * 60 * 1000; // 5 menit
+var FETCH_TIMEOUT_MS = 15000;
+var LS_KEY = 'ps4_dashboard_history_v1';
+
+var state = {
+  skeleton: [],        // master groups from REKAP SKOR: [{name, units:[{name}]}]
+  groups: [],          // groups for the currently selected month (skeleton merged with DATA SKOR)
+  dataSkorRows: [],    // flat rows from DATA SKOR: {monthKey, monthLabel, up3, ulp, frontliner,...}
+  monthList: [],       // [{key, label}] sorted desc
+  activeMonth: '',
+  up3List: [],
+  activeUp3: '',
+  sortKey: null,
+  sortDir: 'desc',
+  up3SortKey: null,
+  up3SortDir: 'desc'
+};
+
+var ASPECTS = [
+  {key:'frontliner', label:'Frontliner'},
+  {key:'security',   label:'Security'},
+  {key:'yantek',     label:'Yantek'},
+  {key:'billman',    label:'Billman'},
+  {key:'p2tl',       label:'P2TL'},
+  {key:'yanbung',    label:'Yanbung'}
+];
+
+// ============ FETCH (JSONP via script tag, bypasses CORS) ============
+function fetchSheetByName(sheetName, onData, onError){
+  var cbName = 'gvizCb_' + Math.floor(Math.random()*1e9);
+  var done = false;
+  var script = document.createElement('script');
+
+  var timer = setTimeout(function(){
+    if(done) return;
+    done = true;
+    cleanup();
+    onError(new Error('timeout: ' + sheetName));
+  }, FETCH_TIMEOUT_MS);
+
+  function cleanup(){
+    clearTimeout(timer);
+    try{ delete window[cbName]; }catch(e){ window[cbName] = undefined; }
+    if(script.parentNode) script.parentNode.removeChild(script);
+  }
+
+  window[cbName] = function(json){
+    if(done) return;
+    done = true;
+    cleanup();
+    onData(json);
+  };
+
+  script.onerror = function(){
+    if(done) return;
+    done = true;
+    cleanup();
+    onError(new Error('script load error: ' + sheetName));
+  };
+
+  // range=A1:R2000 dipasang eksplisit supaya gviz tidak memotong baris terakhir kalau metadata
+  // "used range" internalnya sempat telat mengikuti baris baru yang ditambahkan di sheet
+  // (pernah kejadian: jumlah ULP kebaca 91, bukan 92, karena baris terakhir tidak ikut terbawa).
+  var url = 'https://docs.google.com/spreadsheets/d/' + SHEET_ID + '/gviz/tq'
+    + '?sheet=' + encodeURIComponent(sheetName)
+    + '&range=A1:R2000'
+    + '&headers=0'
+    + '&tqx=out:json;responseHandler:' + cbName
+    + '&_ts=' + Date.now();
+
+  script.src = url;
+  document.body.appendChild(script);
+}
+
+// ============ PARSE ============
+function cellVal(row, idx){
+  if(!row || !row.c || !row.c[idx]) return null;
+  var c = row.c[idx];
+  return (c && typeof c.v !== 'undefined') ? c.v : null;
+}
+
+function normKey(s){ return String(s||'').trim().toUpperCase(); }
+
+// Master skeleton: daftar tetap 92 unit (UP3 & ULP) dari sheet REKAP SKOR.
+// Kolom skor/avg/status di sheet ini diabaikan (itu cuma refleksi bulan yang lagi aktif di C5),
+// yang dipakai cuma struktur UP3->ULP-nya.
+function parseSkeleton(json){
+  if(!json || !json.table || !json.table.rows) throw new Error('format tidak dikenali (REKAP SKOR)');
+  var rows = json.table.rows;
+  if(rows.length < 2) throw new Error('data REKAP SKOR terlalu sedikit — cek nama sheet');
+
+  var groups = [];
+  var groupIndex = {}; // name -> index di groups, jaga-jaga kalau ada baris UP3 duplikat/terpisah
+  var currentGroup = null;
+  var sawAnyUlp = false;
+
+  // Sengaja scan SEMUA baris (bukan mulai dari indeks tetap seperti baris 8) — baris judul/header
+  // di atasnya (baris 1-7) tidak diawali "UP3"/"ULP" jadi otomatis diabaikan. Ini menghindari bug
+  // di mana baris pertama data ULP hilang kalau endpoint gviz Google Sheets sesekali menggeser/
+  // memperlakukan 1 baris sebagai header meski parameter headers=0 sudah dipasang.
+  for(var i = 0; i < rows.length; i++){
+    var r = rows[i];
+    var groupNameRaw = cellVal(r, 0);
+    var unitNameRaw = cellVal(r, 1);
+    if(unitNameRaw === null) continue;
+    // trim + cek prefix case-insensitive, supaya spasi/karakter tak kasat mata atau
+    // beda kapitalisasi di sel sheet tidak bikin 1 baris ULP tidak terhitung.
+    var unitName = String(unitNameRaw).trim();
+    var groupName = groupNameRaw === null ? null : String(groupNameRaw).trim();
+    var unitUpper = unitName.toUpperCase();
+
+    if(unitUpper.indexOf('UP3') === 0){
+      var gName = groupName || unitName;
+      if(Object.prototype.hasOwnProperty.call(groupIndex, gName)){
+        currentGroup = groups[groupIndex[gName]]; // gabung ke grup yang sama kalau nama UP3-nya sama
+      } else {
+        currentGroup = { name: gName, units: [] };
+        groupIndex[gName] = groups.length;
+        groups.push(currentGroup);
+      }
+    } else if(unitUpper.indexOf('ULP') === 0){
+      sawAnyUlp = true;
+      if(!currentGroup){
+        var fallbackName = groupName || 'Lainnya';
+        if(Object.prototype.hasOwnProperty.call(groupIndex, fallbackName)){
+          currentGroup = groups[groupIndex[fallbackName]];
+        } else {
+          currentGroup = { name: fallbackName, units: [] };
+          groupIndex[fallbackName] = groups.length;
+          groups.push(currentGroup);
+        }
+      }
+      currentGroup.units.push({ name: unitName });
+    }
+  }
+
+  if(!sawAnyUlp) throw new Error('tidak ditemukan baris ULP di REKAP SKOR — struktur sheet berubah?');
+  return groups;
+}
+
+// Riwayat skor per bulan dari sheet DATA SKOR (long format, 1 baris = 1 unit di 1 bulan).
+// Kolom: MONTH_KEY, BULAN, UP3, ULP, SKOR FRONTLINER, SECURITY, YANTEK, BILLMAN, P2TL, YANBUNG
+function parseDataSkor(json){
+  if(!json || !json.table || !json.table.rows) throw new Error('format tidak dikenali (DATA SKOR)');
+  var rows = json.table.rows;
+  var out = [];
+  for(var i = 1; i < rows.length; i++){ // baris 0 = header
+    var r = rows[i];
+    var up3 = cellVal(r, 2);
+    var ulp = cellVal(r, 3);
+    if(up3 === null || ulp === null) continue;
+    out.push({
+      monthKey: cellVal(r, 0),
+      monthLabel: cellVal(r, 1),
+      up3: String(up3),
+      ulp: String(ulp),
+      frontliner: cellVal(r,4),
+      security:   cellVal(r,5),
+      yantek:     cellVal(r,6),
+      billman:    cellVal(r,7),
+      p2tl:       cellVal(r,8),
+      yanbung:    cellVal(r,9)
+    });
+  }
+  return out;
+}
+
+var ID_MONTHS = {
+  'JANUARI':1,'FEBRUARI':2,'MARET':3,'APRIL':4,'MEI':5,'JUNI':6,
+  'JULI':7,'AGUSTUS':8,'SEPTEMBER':9,'OKTOBER':10,'NOVEMBER':11,'DESEMBER':12
+};
+function labelToMonthKey(label){
+  var m = String(label).trim().toUpperCase().match(/^([A-Z]+)\s+(\d{4})$/);
+  if(!m || !ID_MONTHS[m[1]]) return null;
+  return Number(m[2]) * 100 + ID_MONTHS[m[1]];
+}
+
+// Daftar bulan mengikuti persis isi dropdown data-validation di sel C5 sheet REKAP SKOR
+// (Agustus s.d. Desember 2026). Ini dibaca sekali dari struktur sheet saat file ini dibuat —
+// gviz (fetch live) tidak bisa membaca aturan data-validation, jadi daftar ini perlu
+// disesuaikan manual kalau nanti dropdown C5 diperluas (mis. ke tahun 2027).
+var FIXED_PERIOD_LABELS = ['AGUSTUS 2026','SEPTEMBER 2026','OKTOBER 2026','NOVEMBER 2026','DESEMBER 2026'];
+
+function buildMonthList(dataSkorRows){
+  var list = FIXED_PERIOD_LABELS.map(function(label){
+    return { key: labelToMonthKey(label), label: label };
+  });
+  var known = {};
+  list.forEach(function(m){ known[m.key] = true; });
+
+  // jaga-jaga: kalau ada baris DATA SKOR dengan bulan di luar daftar tetap di atas
+  // (mis. daftar C5 diperluas tapi kode ini belum diupdate), tetap tampilkan juga.
+  var extra = {};
+  dataSkorRows.forEach(function(r){
+    if(r.monthKey === null || known[r.monthKey]) return;
+    extra[r.monthKey] = r.monthLabel || String(r.monthKey);
+  });
+  Object.keys(extra).forEach(function(k){
+    list.push({ key: isNaN(Number(k))?k:Number(k), label: extra[k] });
+  });
+
+  list.sort(function(a,b){ return (a.key>b.key)?1:(a.key<b.key?-1:0); }); // asc, kronologis
+  return list;
+}
+
+function defaultMonthKey(monthList, dataSkorRows){
+  var withData = {};
+  dataSkorRows.forEach(function(r){ if(r.monthKey!==null) withData[r.monthKey] = true; });
+  var candidates = monthList.filter(function(m){ return withData[m.key]; });
+  if(candidates.length) return String(candidates[candidates.length-1].key); // paling baru yang sudah ada datanya
+  return monthList.length ? String(monthList[0].key) : '';
+}
+
+// Gabungkan skeleton (daftar tetap 92 unit) dengan baris DATA SKOR untuk 1 bulan tertentu.
+function buildGroupsForMonth(monthKey){
+  var lookup = {};
+  state.dataSkorRows.forEach(function(r){
+    if(String(r.monthKey) !== String(monthKey)) return;
+    lookup[normKey(r.up3) + '|' + normKey(r.ulp)] = r;
+  });
+
+  return state.skeleton.map(function(g){
+    return {
+      name: g.name,
+      units: g.units.map(function(u){
+        var row = lookup[normKey(g.name) + '|' + normKey(u.name)];
+        if(!row){
+          return { name: u.name, frontliner:null, security:null, yantek:null, billman:null, p2tl:null, yanbung:null, avg:null, status:null };
+        }
+        var vals = [row.frontliner,row.security,row.yantek,row.billman,row.p2tl,row.yanbung]
+          .filter(function(v){ return v!==null && v!==''; }).map(Number);
+        var avg = vals.length ? (vals.reduce(function(s,v){return s+v;},0)/vals.length) : null;
+        return {
+          name: u.name,
+          frontliner: row.frontliner, security: row.security, yantek: row.yantek,
+          billman: row.billman, p2tl: row.p2tl, yanbung: row.yanbung,
+          avg: avg, status: avg===null ? null : starsForScore(avg)
+        };
+      })
+    };
+  });
+}
+
+// ============ DERIVED STATS ============
+function flattenUnits(groups){
+  var out = [];
+  groups.forEach(function(g){
+    g.units.forEach(function(u){ out.push({group:g.name, unit:u}); });
+  });
+  return out;
+}
+
+function scopedGroups(){
+  if(!state.activeUp3) return state.groups;
+  return state.groups.filter(function(g){ return g.name === state.activeUp3; });
+}
+
+function computeStats(groups){
+  var flat = flattenUnits(groups);
+  var filled = flat.filter(function(x){ return x.unit.avg !== null && x.unit.avg !== ''; });
+  var totalUnits = flat.length;
+  var avgAll = filled.length ? (filled.reduce(function(s,x){return s+Number(x.unit.avg);},0) / filled.length) : null;
+
+  var baik=0, cukup=0, kurang=0;
+  filled.forEach(function(x){
+    var v = Number(x.unit.avg);
+    if(v >= 90) baik++;
+    else if(v >= 80) cukup++;
+    else kurang++;
+  });
+  var belum = totalUnits - filled.length;
+
+  var aspectAvg = {};
+  ASPECTS.forEach(function(a){
+    var vals = flat.map(function(x){ return x.unit[a.key]; }).filter(function(v){ return v !== null && v !== ''; });
+    aspectAvg[a.key] = vals.length ? (vals.reduce(function(s,v){return s+Number(v);},0)/vals.length) : null;
+  });
+
+  return {
+    totalUnits: totalUnits, filledCount: filled.length, avgAll: avgAll,
+    baik: baik, cukup: cukup, kurang: kurang, belum: belum,
+    aspectAvg: aspectAvg
+  };
+}
+
+// Sesuai formula STATUS di sheet REKAP SKOR (J9): ≥90 ★★★★★, ≥85 ★★★★, ≥80 ★★★, ≥70 ★★, <70 ★.
+// Pengelompokan warna diminta: ★/★★ = hitam, ★★★/★★★★ = kuning, ★★★★★ = hijau.
+function scoreBand(v){
+  if(v === null || v === '' || typeof v === 'undefined') return 'na';
+  var n = Number(v);
+  if(n >= 90) return 'hi';   // ★★★★★
+  if(n >= 80) return 'mid';  // ★★★ / ★★★★
+  return 'lo';               // ★ / ★★
+}
+
+function fmt1(v){
+  if(v === null || v === '' || typeof v === 'undefined') return '–';
+  return Number(v).toFixed(1).replace(/\.0$/, function(m){ return m; }) === Number(v).toFixed(1) ? Number(v).toFixed(1) : Number(v).toFixed(1);
+}
+function fmtScore(v){
+  if(v === null || v === '' || typeof v === 'undefined') return '–';
+  var n = Number(v);
+  return (Math.round(n*10)/10).toString();
+}
+
+// ============ RENDER: KPI ============
+function renderKPIs(){
+  var groups = scopedGroups();
+  var stats = computeStats(groups);
+  var target = stats.totalUnits;
+  var realisasi = stats.filledCount;
+
+  document.getElementById('kpiTarget').textContent = (target === null || typeof target === 'undefined') ? '–' : target;
+  document.getElementById('kpiTarget').classList.remove('skeleton');
+  document.getElementById('kpiTargetDesc').textContent = state.activeUp3 ? ('Unit dalam ' + state.activeUp3) : 'Jumlah unit dalam cakupan';
+
+  document.getElementById('kpiRealisasi').innerHTML = (realisasi === null ? '–' : realisasi) + ' <span style="font-size:13px;color:var(--muted);font-weight:600;">/ ' + (target===null?'–':target) + '</span>';
+  document.getElementById('kpiRealisasi').classList.remove('skeleton');
+  var pct = (target && realisasi !== null) ? Math.round((realisasi/target)*100) : null;
+  document.getElementById('kpiRealisasiDesc').innerHTML = pct === null ? '&nbsp;' : ('<span class="down">▼ Baru ' + pct + '% unit terisi</span>');
+
+  document.getElementById('kpiAvg').textContent = stats.avgAll === null ? '–' : fmtScore(stats.avgAll);
+  document.getElementById('kpiAvg').classList.remove('skeleton');
+  document.getElementById('kpiAvgDesc').innerHTML = stats.filledCount ? ('<span class="up">▲</span> dari ' + stats.filledCount + ' unit yang sudah terisi') : 'Belum ada unit terisi';
+
+  document.getElementById('kpiTop').textContent = stats.baik;
+  document.getElementById('kpiTop').classList.remove('skeleton');
+  document.getElementById('kpiTopDesc').textContent = stats.filledCount ? ('dari ' + stats.filledCount + ' unit yang sudah dinilai') : 'dari 0 unit yang sudah dinilai';
+}
+
+// ============ RENDER: TABLE ============
+function renderTable(){
+  var tbody = document.getElementById('tableBody');
+  tbody.innerHTML = '';
+  var groups = scopedGroups();
+
+  if(state.sortKey && state.sortKey !== 'name'){
+    var flat = flattenUnits(groups);
+    flat.sort(function(a,b){
+      var va = a.unit[state.sortKey], vb = b.unit[state.sortKey];
+      var na = (va === null || va === '') ? -Infinity : Number(va);
+      var nb = (vb === null || vb === '') ? -Infinity : Number(vb);
+      return state.sortDir === 'asc' ? (na-nb) : (nb-na);
+    });
+    flat.forEach(function(x){
+      tbody.appendChild(buildUnitRow(x.unit, x.group, true));
+    });
+    return;
+  }
+
+  groups.forEach(function(g){
+    var filled = g.units.filter(function(u){ return u.avg !== null && u.avg !== ''; });
+    var groupAvg = filled.length ? (filled.reduce(function(s,u){return s+Number(u.avg);},0)/filled.length) : null;
+    var band = scoreBand(groupAvg);
+
+    var tr = document.createElement('tr');
+    tr.className = 'up3row';
+    tr.innerHTML = '<td class="unit-name">' + escapeHtml(g.name) + '</td>' +
+      '<td colspan="6"></td>' +
+      '<td>' + (groupAvg===null ? '<span class="score s-na">–</span>' : '<span class="score s-'+band+'">'+fmtScore(groupAvg)+'</span>') + '</td>' +
+      '<td class="stars ' + (groupAvg===null?'na':band) + '">' + (groupAvg===null?'–':starsForScore(groupAvg)) + '</td>';
+    tbody.appendChild(tr);
+
+    g.units.forEach(function(u){
+      tbody.appendChild(buildUnitRow(u, g.name, false));
+    });
+  });
+}
+
+function starsForScore(v){
+  var n = Number(v);
+  if(n>=90) return '★★★★★';
+  if(n>=85) return '★★★★';
+  if(n>=80) return '★★★';
+  if(n>=70) return '★★';
+  return '★';
+}
+
+function buildUnitRow(u, groupName, showGroupPrefix){
+  var tr = document.createElement('tr');
+  var hasData = u.avg !== null && u.avg !== '';
+  var nameCell = showGroupPrefix
+    ? '<span style="color:var(--muted);">'+escapeHtml(groupName)+' › </span>'+escapeHtml(u.name)
+    : escapeHtml(u.name);
+
+  if(!hasData){
+    tr.className = 'empty-row';
+    tr.innerHTML = '<td class="unit-name child">' + nameCell + '</td>' +
+      '<td colspan="6" style="color:#C3CCD6;">Belum ada input</td>' +
+      '<td><span class="score s-na">–</span></td>' +
+      '<td class="stars na">–</td>';
+    return tr;
+  }
+
+  function cell(v){
+    var b = scoreBand(v);
+    return v===null||v===''? '<span class="score s-na">–</span>' : '<span class="score s-'+b+'">'+fmtScore(v)+'</span>';
+  }
+  var avgBand = scoreBand(u.avg);
+  tr.innerHTML = '<td class="unit-name child">' + nameCell + '</td>' +
+    '<td>'+cell(u.frontliner)+'</td>' +
+    '<td>'+cell(u.security)+'</td>' +
+    '<td>'+cell(u.yantek)+'</td>' +
+    '<td>'+cell(u.billman)+'</td>' +
+    '<td>'+cell(u.p2tl)+'</td>' +
+    '<td>'+cell(u.yanbung)+'</td>' +
+    '<td><span class="score s-'+avgBand+'">'+fmtScore(u.avg)+'</span></td>' +
+    '<td class="stars '+avgBand+'">'+(u.status || starsForScore(u.avg))+'</td>';
+  return tr;
+}
+
+function escapeHtml(s){
+  return String(s).replace(/[&<>"']/g, function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+  });
+}
+
+// ============ RENDER: BAR CHART ============
+function renderBarChart(){
+  var groups = scopedGroups();
+  var stats = computeStats(groups);
+  var wrap = document.getElementById('barChart');
+  wrap.innerHTML = '';
+  ASPECTS.forEach(function(a){
+    var v = stats.aspectAvg[a.key];
+    var pct = v === null ? 0 : Math.max(0, Math.min(100, v));
+    var row = document.createElement('div');
+    row.className = 'bar-row';
+    row.innerHTML = '<div class="bar-label">'+a.label+'</div>' +
+      '<div class="bar-track"><div class="bar-fill" style="width:'+pct+'%;"></div></div>' +
+      '<div class="bar-val">'+(v===null?'–':fmtScore(v))+'</div>';
+    wrap.appendChild(row);
+  });
+}
+
+// ============ RENDER: DONUT ============
+function renderDonut(){
+  var groups = scopedGroups();
+  var stats = computeStats(groups);
+  var total = stats.totalUnits || 1;
+  var segs = [
+    {label:'★★★★★ (≥90)', count: stats.baik, color:'#1D9A6C'},
+    {label:'★★★ / ★★★★ (80–89)', count: stats.cukup, color:'#E0A100'},
+    {label:'★ / ★★ (<80)', count: stats.kurang, color:'#1B1B1B'},
+    {label:'Belum dinilai', count: stats.belum, color:'#C3CCD6'}
+  ];
+
+  var svg = document.getElementById('donutSvg');
+  var circles = '<circle cx="21" cy="21" r="15.9" fill="transparent" stroke="#EEF1F5" stroke-width="6"></circle>';
+  var offsetAcc = 25; // start similar to mockup
+  segs.forEach(function(s){
+    var frac = s.count / total;
+    var dash = Math.max(0, frac*100);
+    circles += '<circle cx="21" cy="21" r="15.9" fill="transparent" stroke="'+s.color+'" stroke-width="6" ' +
+      'stroke-dasharray="'+dash.toFixed(2)+' '+(100-dash).toFixed(2)+'" stroke-dashoffset="'+offsetAcc.toFixed(2)+'" stroke-linecap="butt"></circle>';
+    offsetAcc -= dash;
+  });
+  svg.innerHTML = circles;
+
+  var legend = document.getElementById('donutLegend');
+  legend.innerHTML = '';
+  segs.forEach(function(s){
+    var div = document.createElement('div');
+    div.innerHTML = '<span class="dot" style="background:'+s.color+';"></span>'+s.label+' — '+s.count+' unit';
+    legend.appendChild(div);
+  });
+}
+
+// ============ RENDER: RINGKASAN PER UP3 (selalu semua UP3, tidak ikut filter UP3 di atas) ============
+function up3SummaryRows(){
+  // sengaja pakai state.groups (bukan scopedGroups()) supaya tabel ini tidak ikut filter UP3
+  return state.groups.map(function(g){
+    var filled = g.units.filter(function(u){ return u.avg !== null && u.avg !== ''; });
+    var avg = filled.length ? (filled.reduce(function(s,u){return s+Number(u.avg);},0)/filled.length) : null;
+
+    var row = {
+      name: g.name,
+      realisasi: filled.length,
+      total: g.units.length,
+      avg: avg,
+      status: avg===null ? null : starsForScore(avg)
+    };
+
+    ASPECTS.forEach(function(a){
+      var vals = g.units.map(function(u){ return u[a.key]; }).filter(function(v){ return v !== null && v !== ''; });
+      row[a.key] = vals.length ? (vals.reduce(function(s,v){return s+Number(v);},0)/vals.length) : null;
+    });
+
+    return row;
+  });
+}
+
+function renderUp3Summary(){
+  var rows = up3SummaryRows();
+
+  if(state.up3SortKey){
+    var key = state.up3SortKey, dir = state.up3SortDir;
+    rows.sort(function(a,b){
+      if(key === 'name'){
+        return dir==='asc' ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name);
+      }
+      var va = a[key]===null ? -Infinity : Number(a[key]);
+      var vb = b[key]===null ? -Infinity : Number(b[key]);
+      return dir==='asc' ? (va-vb) : (vb-va);
+    });
+  }
+
+  var tbody = document.getElementById('up3SummaryBody');
+  tbody.innerHTML = '';
+  rows.forEach(function(r){
+    var band = scoreBand(r.avg);
+    var aspectCells = ASPECTS.map(function(a){
+      var v = r[a.key];
+      var b = scoreBand(v);
+      return '<td>' + (v===null ? '<span class="score s-na">–</span>' : '<span class="score s-'+b+'">'+fmtScore(v)+'</span>') + '</td>';
+    }).join('');
+    var shortName = r.name.replace(/^UP3\s+/i, '');
+    var tr = document.createElement('tr');
+    tr.innerHTML = '<td class="unit-name" title="' + escapeHtml(r.name) + '">' + escapeHtml(shortName) + '</td>' +
+      '<td>' + r.realisasi + ' <span style="color:var(--muted);">/ ' + r.total + '</span></td>' +
+      aspectCells +
+      '<td>' + (r.avg===null ? '<span class="score s-na">–</span>' : '<span class="score s-'+band+'">'+fmtScore(r.avg)+'</span>') + '</td>' +
+      '<td class="stars ' + (r.avg===null?'na':band) + '">' + (r.avg===null?'–':r.status) + '</td>';
+    tbody.appendChild(tr);
+  });
+
+  updateUp3SummarySortIndicator();
+}
+
+function updateUp3SummarySortIndicator(){
+  var ths = document.querySelectorAll('#up3SummaryHead th');
+  ths.forEach(function(th){
+    var key = th.getAttribute('data-key');
+    var base = th.textContent.replace(/[▲▼]\s*$/,'').trim();
+    if(key === state.up3SortKey){
+      th.innerHTML = base + ' <span class="arrow">'+(state.up3SortDir==='asc'?'▲':'▼')+'</span>';
+    } else {
+      th.textContent = base;
+    }
+  });
+}
+
+// ============ RENDER: FILTERS (UP3 & Bulan) ============
+function renderFilterOptions(){
+  var sel = document.getElementById('up3Filter');
+  var current = state.activeUp3;
+  sel.innerHTML = '<option value="">Semua UP3</option>';
+  state.up3List.forEach(function(name){
+    var opt = document.createElement('option');
+    opt.value = name; opt.textContent = name;
+    sel.appendChild(opt);
+  });
+  sel.value = current || '';
+
+  var bsel = document.getElementById('bulanFilter');
+  if(!state.monthList.length){
+    bsel.innerHTML = '<option value="">Belum ada data bulan</option>';
+    return;
+  }
+  bsel.innerHTML = '';
+  state.monthList.forEach(function(m){
+    var opt = document.createElement('option');
+    opt.value = String(m.key); opt.textContent = m.label;
+    bsel.appendChild(opt);
+  });
+  bsel.value = String(state.activeMonth);
+}
+
+// ============ RENDER: TREND (local history via localStorage) ============
+function loadHistory(){
+  try{
+    var raw = localStorage.getItem(LS_KEY);
+    return raw ? JSON.parse(raw) : [];
+  }catch(e){ return []; }
+}
+function saveHistoryPoint(avg, realisasi){
+  try{
+    var hist = loadHistory();
+    var today = new Date();
+    var dayKey = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+    hist = hist.filter(function(h){ return h.dayKey !== dayKey; });
+    hist.push({dayKey: dayKey, ts: Date.now(), avg: avg, realisasi: realisasi});
+    if(hist.length > 60) hist = hist.slice(hist.length-60);
+    localStorage.setItem(LS_KEY, JSON.stringify(hist));
+    return hist;
+  }catch(e){ return loadHistory(); }
+}
+
+function renderTrend(hist){
+  var svg = document.getElementById('trendSvg');
+  var caption = document.getElementById('trendCaption');
+  var W = 1100, H = 130, padL=50, padR=40, padT=20, padB=30;
+
+  if(!hist || hist.length === 0){
+    svg.innerHTML = '';
+    caption.textContent = 'Belum ada riwayat lokal. Buka dashboard ini lagi di hari berikutnya untuk mulai membangun grafik tren.';
+    return;
+  }
+  if(hist.length === 1){
+    var h = hist[0];
+    svg.innerHTML = '<line x1="0" y1="65" x2="1100" y2="65" stroke="#EEF1F5"></line>' +
+      '<circle cx="550" cy="65" r="5" fill="#0F2A47"></circle>' +
+      '<text x="500" y="122" font-size="11" fill="#6B7A8D">'+h.dayKey+'</text>';
+    caption.textContent = 'Baru 1 titik riwayat lokal (skor rata-rata: '+(h.avg===null?'–':fmtScore(h.avg))+'). Grafik akan terbentuk setelah dashboard dibuka di beberapa hari berbeda.';
+    return;
+  }
+
+  var vals = hist.map(function(h){ return h.avg===null? null : Number(h.avg); }).filter(function(v){return v!==null;});
+  var maxV = Math.max(100, Math.max.apply(null, vals.length?vals:[100]));
+  var minV = 0;
+  var n = hist.length;
+  var stepX = (W-padL-padR) / Math.max(1,(n-1));
+
+  var pts = hist.map(function(h,i){
+    var x = padL + i*stepX;
+    var v = h.avg===null?0:Number(h.avg);
+    var y = padT + (H-padT-padB) * (1 - (v-minV)/(maxV-minV));
+    return {x:x, y:y, label:h.dayKey};
+  });
+
+  var lines = '<line x1="0" y1="'+(padT)+'" x2="'+W+'" y2="'+(padT)+'" stroke="#EEF1F5"></line>' +
+    '<line x1="0" y1="'+((H-padB+padT)/2)+'" x2="'+W+'" y2="'+((H-padB+padT)/2)+'" stroke="#EEF1F5"></line>' +
+    '<line x1="0" y1="'+(H-padB)+'" x2="'+W+'" y2="'+(H-padB)+'" stroke="#EEF1F5"></line>';
+
+  var poly = pts.map(function(p){ return p.x.toFixed(1)+','+p.y.toFixed(1); }).join(' ');
+  lines += '<polyline fill="none" stroke="#0F2A47" stroke-width="3" points="'+poly+'"></polyline>';
+  pts.forEach(function(p,i){
+    lines += '<circle cx="'+p.x.toFixed(1)+'" cy="'+p.y.toFixed(1)+'" r="4" fill="#0F2A47"></circle>';
+    if(i===0 || i===pts.length-1 || n<=6){
+      lines += '<text x="'+(p.x-15).toFixed(1)+'" y="122" font-size="11" fill="#6B7A8D">'+p.label.slice(5)+'</text>';
+    }
+  });
+  svg.innerHTML = lines;
+  caption.textContent = 'Riwayat lokal ('+n+' titik) di perangkat ini. Nilai: rata-rata skor unit terisi per hari akses.';
+}
+
+// ============ MAIN RENDER ============
+function renderAll(){
+  renderFilterOptions();
+  renderKPIs();
+  renderTable();
+  renderBarChart();
+  renderDonut();
+  renderUp3Summary();
+  var globalStats = computeStats(state.groups);
+  var hist = saveHistoryPoint(globalStats.avgAll, state.realisasi);
+  renderTrend(hist);
+  updateSortNote();
+}
+
+function updateSortNote(){
+  document.getElementById('sortResetNote').style.display = state.sortKey && state.sortKey!=='name' ? 'inline-block' : 'none';
+  var ths = document.querySelectorAll('#tableHeadRow th');
+  ths.forEach(function(th){
+    var key = th.getAttribute('data-key');
+    var base = th.textContent.replace(/[▲▼]\s*$/,'').trim();
+    if(key === state.sortKey){
+      th.innerHTML = base + ' <span class="arrow">'+(state.sortDir==='asc'?'▲':'▼')+'</span>';
+    } else {
+      th.textContent = base;
+    }
+  });
+}
+
+function resetSort(){
+  state.sortKey = null;
+  renderTable();
+  updateSortNote();
+}
+
+// ============ EXPORT PDF (pilih bagian yang disertakan) ============
+function toggleExportPopup(){
+  document.getElementById('exportPopup').classList.toggle('show');
+}
+function closeExportPopup(){
+  document.getElementById('exportPopup').classList.remove('show');
+}
+function confirmExportPdf(){
+  document.querySelectorAll('.exportChk').forEach(function(chk){
+    var el = document.getElementById(chk.getAttribute('data-target'));
+    if(el) el.classList.toggle('print-hide', !chk.checked);
+  });
+  closeExportPopup();
+  window.print();
+}
+// tutup popup kalau klik di luar area popup/tombolnya
+document.addEventListener('click', function(e){
+  var popup = document.getElementById('exportPopup');
+  if(!popup || !popup.classList.contains('show')) return;
+  if(e.target.closest('#exportPopup') || e.target.closest('#exportPdfBtn')) return;
+  popup.classList.remove('show');
+});
+
+// ============ EVENTS ============
+document.getElementById('up3Filter').addEventListener('change', function(e){
+  state.activeUp3 = e.target.value;
+  renderKPIs(); renderTable(); renderBarChart(); renderDonut();
+});
+
+document.getElementById('bulanFilter').addEventListener('change', function(e){
+  state.activeMonth = e.target.value;
+  state.groups = buildGroupsForMonth(state.activeMonth);
+  updateSubLabel();
+  renderKPIs(); renderTable(); renderBarChart(); renderDonut(); renderUp3Summary();
+});
+
+document.getElementById('up3SummaryHead').addEventListener('click', function(e){
+  var th = e.target.closest('th');
+  if(!th) return;
+  var key = th.getAttribute('data-key');
+  if(state.up3SortKey === key){
+    state.up3SortDir = state.up3SortDir === 'desc' ? 'asc' : 'desc';
+  } else {
+    state.up3SortKey = key;
+    state.up3SortDir = key === 'name' ? 'asc' : 'desc';
+  }
+  renderUp3Summary();
+});
+
+document.getElementById('tableHeadRow').addEventListener('click', function(e){
+  var th = e.target.closest('th');
+  if(!th) return;
+  var key = th.getAttribute('data-key');
+  if(key === 'name'){ resetSort(); return; }
+  if(state.sortKey === key){
+    state.sortDir = state.sortDir === 'desc' ? 'asc' : 'desc';
+  } else {
+    state.sortKey = key;
+    state.sortDir = 'desc';
+  }
+  renderTable();
+  updateSortNote();
+});
+
+// ============ LOAD CYCLE ============
+var lastRefreshedAt = null;
+
+function updateSubLabel(){
+  var monthObj = state.monthList.filter(function(m){ return String(m.key) === String(state.activeMonth); })[0];
+  var label = monthObj ? monthObj.label : '-';
+  document.getElementById('subLabel').textContent =
+    'Periode: ' + label +
+    (lastRefreshedAt ? (' • Terakhir disegarkan: ' + lastRefreshedAt.toLocaleTimeString('id-ID')) : '');
+}
+
+var refreshing = false;
+function loadData(isManual){
+  if(refreshing) return;
+  refreshing = true;
+  var btn = document.getElementById('refreshBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spin">⟳</span> Memuat…';
+
+  var results = {};
+  var errors = [];
+  var pending = 2;
+
+  function finish(){
+    pending--;
+    if(pending > 0) return;
+    // both fetches settled
+    if(errors.length){
+      showError(errors[0]);
+    } else {
+      try{
+        state.skeleton = results.skeleton;
+        state.dataSkorRows = results.dataSkor;
+        state.up3List = state.skeleton.map(function(g){ return g.name; });
+        state.monthList = buildMonthList(state.dataSkorRows);
+
+        // pertahankan bulan aktif kalau masih valid, kalau tidak pilih otomatis
+        // (bulan terbaru yang sudah ada datanya; kalau belum ada sama sekali, bulan pertama di daftar)
+        var stillExists = state.monthList.some(function(m){ return String(m.key) === String(state.activeMonth); });
+        if(!state.activeMonth || !stillExists){
+          state.activeMonth = defaultMonthKey(state.monthList, state.dataSkorRows);
+        }
+        state.groups = buildGroupsForMonth(state.activeMonth);
+
+        document.getElementById('errorBanner').classList.remove('show');
+        lastRefreshedAt = new Date();
+        updateSubLabel();
+        renderAll();
+      }catch(err){
+        showError(err);
+      }
+    }
+    refreshing = false;
+    btn.disabled = false;
+    btn.innerHTML = '⟳ Refresh';
+  }
+
+  fetchSheetByName(SHEET_NAME_REKAP, function(json){
+    try{ results.skeleton = parseSkeleton(json); }
+    catch(err){ errors.push(err); }
+    finish();
+  }, function(err){ errors.push(err); finish(); });
+
+  fetchSheetByName(SHEET_NAME_DATA, function(json){
+    try{ results.dataSkor = parseDataSkor(json); }
+    catch(err){ errors.push(err); }
+    finish();
+  }, function(err){ errors.push(err); finish(); });
+}
+
+function showError(err){
+  console.error(err);
+  document.getElementById('errorBanner').classList.add('show');
+}
+
+function manualRefresh(){ loadData(true); }
+
+loadData(false);
+setInterval(function(){ loadData(false); }, AUTO_REFRESH_MS);
+</script>
+</body>
+</html>
