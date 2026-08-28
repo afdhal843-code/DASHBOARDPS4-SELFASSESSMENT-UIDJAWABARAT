@@ -360,7 +360,7 @@
     <div class="trend-caption" id="trendCaption">Memuat riwayat lokal…</div>
   </div>
 
-  <footer id="footerNote">Data input Google Form Self Assessment PS4. Warna sel/bintang: hijau <span class="stars hi" style="font-size:10.5px;">★★★★★</span> (≥90) · kuning <span class="stars mid" style="font-size:10.5px;">★★★–★★★★</span> (80–89) · hitam <span class="stars lo" style="font-size:10.5px;">★–★★</span> (&lt;80) · Auto-refresh setiap 5 menit · <span style="opacity:.55;">— versi file: 2026-08-28.v15</span></footer>
+  <footer id="footerNote">Data input Google Form Self Assessment PS4. Warna sel/bintang: hijau <span class="stars hi" style="font-size:10.5px;">★★★★★</span> (≥90) · kuning <span class="stars mid" style="font-size:10.5px;">★★★–★★★★</span> (80–89) · hitam <span class="stars lo" style="font-size:10.5px;">★–★★</span> (&lt;80) · Auto-refresh setiap 5 menit · <span style="opacity:.55;">— versi file: 2026-08-28.v16</span></footer>
 </div>
 
 <script>
@@ -939,6 +939,9 @@ function renderFilterOptions(){
 function buildMonthlyTrend(){
   return state.monthList.map(function(m){
     var groups = buildGroupsForMonth(m.key);
+    if(state.activeUp3){
+      groups = groups.filter(function(g){ return g.name === state.activeUp3; });
+    }
     var stats = computeStats(groups);
     return {
       key: m.key,
@@ -1000,12 +1003,13 @@ function renderTrend(monthly){
 
   svg.innerHTML = lines;
 
+  var scopeLabel = state.activeUp3 ? (' — ' + state.activeUp3) : ' — semua UP3';
   var withData = monthly.filter(function(m){ return m.avg !== null; });
   if(!withData.length){
-    caption.innerHTML = 'Belum ada data skor untuk bulan manapun.';
+    caption.innerHTML = 'Belum ada data skor untuk bulan manapun' + scopeLabel + '.';
   } else {
     var last = withData[withData.length-1];
-    caption.innerHTML = 'Tren skor rata-rata per bulan (' + monthly.length + ' bulan). Bulan terakhir dengan data: ' + last.label + ' (skor ' + fmtScore(last.avg) + ').';
+    caption.innerHTML = 'Tren skor rata-rata per bulan' + scopeLabel + ' (' + monthly.length + ' bulan). Bulan terakhir dengan data: ' + last.label + ' (skor ' + fmtScore(last.avg) + ').';
   }
 }
 
@@ -1068,6 +1072,7 @@ document.addEventListener('click', function(e){
 document.getElementById('up3Filter').addEventListener('change', function(e){
   state.activeUp3 = e.target.value;
   renderKPIs(); renderTable(); renderBarChart(); renderDonut();
+  renderTrend(buildMonthlyTrend());
 });
 
 document.getElementById('bulanFilter').addEventListener('change', function(e){
