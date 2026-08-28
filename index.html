@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Dashboard Self Assessment PS4 — UID Jawa Barat</title>
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%230F2A47'/%3E%3Ctext x='50' y='67' font-size='50' text-anchor='middle' fill='%23F2B705' font-family='Segoe UI,Arial,sans-serif' font-weight='700'%3EPS4%3C/text%3E%3C/svg%3E">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%230F2A47'/%3E%3Ctext x='50' y='64' font-size='36' text-anchor='middle' fill='%23F2B705' font-family='Segoe UI,Arial,sans-serif' font-weight='700'%3EPS4%3C/text%3E%3C/svg%3E">
 <style>
   :root{
     --navy:#0F2A47;
@@ -231,9 +231,9 @@
         <div class="export-popup" id="exportPopup">
           <div class="export-popup-title">Sertakan di PDF:</div>
           <label><input type="checkbox" class="exportChk" data-target="panelSkorUnit" checked> Skor per Unit (tabel heatmap)</label>
-          <label><input type="checkbox" class="exportChk" data-target="panelAspek" checked> Skor per Aspek PS4</label>
+          <label><input type="checkbox" class="exportChk" data-target="panelAspek" checked> Rata-rata per Aspek PS4</label>
           <label><input type="checkbox" class="exportChk" data-target="panelDonut" checked> Distribusi Status Bintang</label>
-          <label><input type="checkbox" class="exportChk" data-target="panelUp3Summary" checked> Skor per UP3</label>
+          <label><input type="checkbox" class="exportChk" data-target="panelUp3Summary" checked> Rata-rata per UP3</label>
           <label><input type="checkbox" class="exportChk" data-target="panelTrend" checked> Tren Skor &amp; Realisasi</label>
           <div class="export-popup-actions">
             <button type="button" onclick="closeExportPopup()">Batal</button>
@@ -306,7 +306,7 @@
 
     <div style="display:flex;flex-direction:column;gap:14px;">
       <div class="panel" id="panelAspek">
-        <h2>Skor per Aspek PS4</h2>
+        <h2>Rata-rata per Aspek PS4</h2>
         <div class="desc">6 komponen penilaian &amp; Bulan).</div>
         <div id="barChart">
           <div class="bar-row"><div class="bar-label">Frontliner</div><div class="bar-track"><div class="bar-fill" style="width:0%;"></div></div><div class="bar-val">–</div></div>
@@ -325,7 +325,7 @@
       </div>
 
       <div class="panel" id="panelUp3Summary">
-        <h2>Skor per UP3 <span class="note">semua UP3 </span></h2>
+        <h2>Rata-rata per UP3 <span class="note">semua UP3 </span></h2>
         <div class="desc">Ringkasan agregat tiap UP3 per indikator PS4.</div>
         <div class="table-scroll table-compact">
         <table>
@@ -360,7 +360,7 @@
     <div class="trend-caption" id="trendCaption">Memuat riwayat lokal…</div>
   </div>
 
-  <footer id="footerNote">Data input Google Form Self Assessment PS4. Warna sel/bintang: hijau <span class="stars hi" style="font-size:10.5px;">★★★★★</span> (≥90) · kuning <span class="stars mid" style="font-size:10.5px;">★★★–★★★★</span> (80–89) · hitam <span class="stars lo" style="font-size:10.5px;">★–★★</span> (&lt;80) · Auto-refresh setiap 5 menit · <span style="opacity:.55;">— versi file: 2026-08-27.v13</span></footer>
+  <footer id="footerNote">Data input Google Form Self Assessment PS4. Warna sel/bintang: hijau <span class="stars hi" style="font-size:10.5px;">★★★★★</span> (≥90) · kuning <span class="stars mid" style="font-size:10.5px;">★★★–★★★★</span> (80–89) · hitam <span class="stars lo" style="font-size:10.5px;">★–★★</span> (&lt;80) · Auto-refresh setiap 5 menit · <span style="opacity:.55;">— versi file: 2026-08-28.v14</span></footer>
 </div>
 
 <script>
@@ -370,7 +370,6 @@ var SHEET_NAME_REKAP = 'REKAP SKOR';   // master daftar 92 unit (UP3/ULP)
 var SHEET_NAME_DATA  = 'DATA SKOR';    // riwayat skor per bulan (MONTH_KEY,BULAN,UP3,ULP,...)
 var AUTO_REFRESH_MS = 5 * 60 * 1000; // 5 menit
 var FETCH_TIMEOUT_MS = 15000;
-var LS_KEY = 'ps4_dashboard_history_v1';
 
 var state = {
   skeleton: [],        // master groups from REKAP SKOR: [{name, units:[{name}]}]
@@ -936,72 +935,90 @@ function renderFilterOptions(){
   bsel.value = String(state.activeMonth);
 }
 
-// ============ RENDER: TREND (local history via localStorage) ============
-function loadHistory(){
-  try{
-    var raw = localStorage.getItem(LS_KEY);
-    return raw ? JSON.parse(raw) : [];
-  }catch(e){ return []; }
-}
-function saveHistoryPoint(avg, realisasi){
-  try{
-    var hist = loadHistory();
-    var today = new Date();
-    var dayKey = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
-    hist = hist.filter(function(h){ return h.dayKey !== dayKey; });
-    hist.push({dayKey: dayKey, ts: Date.now(), avg: avg, realisasi: realisasi});
-    if(hist.length > 60) hist = hist.slice(hist.length-60);
-    localStorage.setItem(LS_KEY, JSON.stringify(hist));
-    return hist;
-  }catch(e){ return loadHistory(); }
+// ============ RENDER: TREND (per bulan, dari data riil sheet) ============
+function buildMonthlyTrend(){
+  return state.monthList.map(function(m){
+    var groups = buildGroupsForMonth(m.key);
+    var stats = computeStats(groups);
+    var pct = stats.totalUnits ? Math.round((stats.filledCount/stats.totalUnits)*100) : null;
+    return {
+      key: m.key,
+      label: m.label,
+      avg: stats.avgAll,
+      realisasi: stats.filledCount,
+      target: stats.totalUnits,
+      pct: (stats.filledCount>0) ? pct : null
+    };
+  });
 }
 
-function renderTrend(hist){
+function renderTrend(monthly){
   var svg = document.getElementById('trendSvg');
   var caption = document.getElementById('trendCaption');
-  var W = 1100, H = 130, padL=50, padR=40, padT=20, padB=30;
+  var W = 1100, H = 130, padL=44, padR=40, padT=20, padB=30;
+  var innerH = H - padT - padB;
 
-  if(!hist || hist.length === 0){
+  if(!monthly || monthly.length === 0){
     svg.innerHTML = '';
-    caption.textContent = 'Belum ada riwayat lokal. Buka dashboard ini lagi di hari berikutnya untuk mulai membangun grafik tren.';
-    return;
-  }
-  if(hist.length === 1){
-    var h = hist[0];
-    svg.innerHTML = '<line x1="0" y1="65" x2="1100" y2="65" stroke="#EEF1F5"></line>' +
-      '<circle cx="550" cy="65" r="5" fill="#0F2A47"></circle>' +
-      '<text x="500" y="122" font-size="11" fill="#6B7A8D">'+h.dayKey+'</text>';
-    caption.textContent = 'Baru 1 titik riwayat lokal (skor rata-rata: '+(h.avg===null?'–':fmtScore(h.avg))+'). Grafik akan terbentuk setelah dashboard dibuka di beberapa hari berbeda.';
+    caption.textContent = 'Belum ada data bulan untuk ditampilkan.';
     return;
   }
 
-  var vals = hist.map(function(h){ return h.avg===null? null : Number(h.avg); }).filter(function(v){return v!==null;});
-  var maxV = Math.max(100, Math.max.apply(null, vals.length?vals:[100]));
-  var minV = 0;
-  var n = hist.length;
-  var stepX = (W-padL-padR) / Math.max(1,(n-1));
-
-  var pts = hist.map(function(h,i){
-    var x = padL + i*stepX;
-    var v = h.avg===null?0:Number(h.avg);
-    var y = padT + (H-padT-padB) * (1 - (v-minV)/(maxV-minV));
-    return {x:x, y:y, label:h.dayKey};
-  });
+  var n = monthly.length;
+  var stepX = n > 1 ? (W-padL-padR) / (n-1) : 0;
+  var xs = monthly.map(function(m,i){ return n>1 ? (padL + i*stepX) : (W/2); });
+  function yFor(v){ return padT + innerH * (1 - (Math.max(0,Math.min(100,v)))/100); }
 
   var lines = '<line x1="0" y1="'+(padT)+'" x2="'+W+'" y2="'+(padT)+'" stroke="#EEF1F5"></line>' +
-    '<line x1="0" y1="'+((H-padB+padT)/2)+'" x2="'+W+'" y2="'+((H-padB+padT)/2)+'" stroke="#EEF1F5"></line>' +
+    '<line x1="0" y1="'+(padT+innerH/2)+'" x2="'+W+'" y2="'+(padT+innerH/2)+'" stroke="#EEF1F5"></line>' +
     '<line x1="0" y1="'+(H-padB)+'" x2="'+W+'" y2="'+(H-padB)+'" stroke="#EEF1F5"></line>';
 
-  var poly = pts.map(function(p){ return p.x.toFixed(1)+','+p.y.toFixed(1); }).join(' ');
-  lines += '<polyline fill="none" stroke="#0F2A47" stroke-width="3" points="'+poly+'"></polyline>';
-  pts.forEach(function(p,i){
-    lines += '<circle cx="'+p.x.toFixed(1)+'" cy="'+p.y.toFixed(1)+'" r="4" fill="#0F2A47"></circle>';
-    if(i===0 || i===pts.length-1 || n<=6){
-      lines += '<text x="'+(p.x-15).toFixed(1)+'" y="122" font-size="11" fill="#6B7A8D">'+p.label.slice(5)+'</text>';
+  function buildPolyline(getVal, color){
+    var segs = [], current = [];
+    monthly.forEach(function(m,i){
+      var v = getVal(m);
+      if(v === null || typeof v === 'undefined'){
+        if(current.length){ segs.push(current); current = []; }
+        return;
+      }
+      current.push(xs[i].toFixed(1)+','+yFor(v).toFixed(1));
+    });
+    if(current.length) segs.push(current);
+    return segs.map(function(seg){
+      return '<polyline fill="none" stroke="'+color+'" stroke-width="3" points="'+seg.join(' ')+'"></polyline>';
+    }).join('');
+  }
+
+  lines += buildPolyline(function(m){ return m.avg===null?null:Number(m.avg); }, '#0F2A47');
+  lines += buildPolyline(function(m){ return m.pct===null?null:Number(m.pct); }, '#F2B705');
+
+  monthly.forEach(function(m,i){
+    var x = xs[i];
+    if(m.avg !== null){
+      lines += '<circle cx="'+x.toFixed(1)+'" cy="'+yFor(m.avg).toFixed(1)+'" r="4" fill="#0F2A47"></circle>';
     }
+    if(m.pct !== null){
+      lines += '<circle cx="'+x.toFixed(1)+'" cy="'+yFor(m.pct).toFixed(1)+'" r="4" fill="#F2B705"></circle>';
+    }
+    if(m.avg === null && m.pct === null){
+      lines += '<circle cx="'+x.toFixed(1)+'" cy="'+(H-padB).toFixed(1)+'" r="3" fill="#C7D0DA"></circle>';
+    }
+    var shortLabel = String(m.label).split(' ')[0].slice(0,3);
+    lines += '<text x="'+(x-12).toFixed(1)+'" y="122" font-size="11" fill="#6B7A8D">'+shortLabel+'</text>';
   });
+
   svg.innerHTML = lines;
-  caption.textContent = 'Riwayat lokal ('+n+' titik) di perangkat ini. Nilai: rata-rata skor unit terisi per hari akses.';
+
+  var withData = monthly.filter(function(m){ return m.avg !== null; });
+  if(!withData.length){
+    caption.innerHTML = 'Belum ada data skor untuk bulan manapun.';
+  } else {
+    var last = withData[withData.length-1];
+    caption.innerHTML = 'Tren per bulan (' + monthly.length + ' bulan). ' +
+      '<span style="color:#0F2A47;font-weight:700;">■</span> Skor rata-rata &nbsp; ' +
+      '<span style="color:#F2B705;font-weight:700;">■</span> Realisasi (%). ' +
+      'Bulan terakhir dengan data: ' + last.label + ' (skor ' + fmtScore(last.avg) + ', realisasi ' + last.pct + '%).';
+  }
 }
 
 // ============ MAIN RENDER ============
@@ -1012,9 +1029,7 @@ function renderAll(){
   renderBarChart();
   renderDonut();
   renderUp3Summary();
-  var globalStats = computeStats(state.groups);
-  var hist = saveHistoryPoint(globalStats.avgAll, state.realisasi);
-  renderTrend(hist);
+  renderTrend(buildMonthlyTrend());
   updateSortNote();
 }
 
