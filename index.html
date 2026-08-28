@@ -234,7 +234,7 @@
           <label><input type="checkbox" class="exportChk" data-target="panelAspek" checked> Rata-rata per Aspek PS4</label>
           <label><input type="checkbox" class="exportChk" data-target="panelDonut" checked> Distribusi Status Bintang</label>
           <label><input type="checkbox" class="exportChk" data-target="panelUp3Summary" checked> Rata-rata per UP3</label>
-          <label><input type="checkbox" class="exportChk" data-target="panelTrend" checked> Tren Skor &amp; Realisasi</label>
+          <label><input type="checkbox" class="exportChk" data-target="panelTrend" checked> Tren Skor PS4</label>
           <div class="export-popup-actions">
             <button type="button" onclick="closeExportPopup()">Batal</button>
             <button type="button" onclick="confirmExportPdf()">⬇ Export</button>
@@ -353,14 +353,14 @@
   </div>
 
   <div class="panel" id="panelTrend">
-    <h2>Tren Skor PS4 &amp; Realisasi <span class="note">hasil input Self Assessment PS4 UID Jawa Barat 2026</span></h2>
+    <h2>Tren Skor PS4 <span class="note">hasil input Self Assessment PS4 UID Jawa Barat 2026</span></h2>
     <div id="trendChartWrap">
       <svg width="100%" height="130" viewBox="0 0 1100 130" preserveAspectRatio="none" id="trendSvg"></svg>
     </div>
     <div class="trend-caption" id="trendCaption">Memuat riwayat lokal…</div>
   </div>
 
-  <footer id="footerNote">Data input Google Form Self Assessment PS4. Warna sel/bintang: hijau <span class="stars hi" style="font-size:10.5px;">★★★★★</span> (≥90) · kuning <span class="stars mid" style="font-size:10.5px;">★★★–★★★★</span> (80–89) · hitam <span class="stars lo" style="font-size:10.5px;">★–★★</span> (&lt;80) · Auto-refresh setiap 5 menit · <span style="opacity:.55;">— versi file: 2026-08-28.v14</span></footer>
+  <footer id="footerNote">Data input Google Form Self Assessment PS4. Warna sel/bintang: hijau <span class="stars hi" style="font-size:10.5px;">★★★★★</span> (≥90) · kuning <span class="stars mid" style="font-size:10.5px;">★★★–★★★★</span> (80–89) · hitam <span class="stars lo" style="font-size:10.5px;">★–★★</span> (&lt;80) · Auto-refresh setiap 5 menit · <span style="opacity:.55;">— versi file: 2026-08-28.v15</span></footer>
 </div>
 
 <script>
@@ -940,14 +940,10 @@ function buildMonthlyTrend(){
   return state.monthList.map(function(m){
     var groups = buildGroupsForMonth(m.key);
     var stats = computeStats(groups);
-    var pct = stats.totalUnits ? Math.round((stats.filledCount/stats.totalUnits)*100) : null;
     return {
       key: m.key,
       label: m.label,
-      avg: stats.avgAll,
-      realisasi: stats.filledCount,
-      target: stats.totalUnits,
-      pct: (stats.filledCount>0) ? pct : null
+      avg: stats.avgAll
     };
   });
 }
@@ -990,17 +986,12 @@ function renderTrend(monthly){
   }
 
   lines += buildPolyline(function(m){ return m.avg===null?null:Number(m.avg); }, '#0F2A47');
-  lines += buildPolyline(function(m){ return m.pct===null?null:Number(m.pct); }, '#F2B705');
 
   monthly.forEach(function(m,i){
     var x = xs[i];
     if(m.avg !== null){
       lines += '<circle cx="'+x.toFixed(1)+'" cy="'+yFor(m.avg).toFixed(1)+'" r="4" fill="#0F2A47"></circle>';
-    }
-    if(m.pct !== null){
-      lines += '<circle cx="'+x.toFixed(1)+'" cy="'+yFor(m.pct).toFixed(1)+'" r="4" fill="#F2B705"></circle>';
-    }
-    if(m.avg === null && m.pct === null){
+    } else {
       lines += '<circle cx="'+x.toFixed(1)+'" cy="'+(H-padB).toFixed(1)+'" r="3" fill="#C7D0DA"></circle>';
     }
     var shortLabel = String(m.label).split(' ')[0].slice(0,3);
@@ -1014,10 +1005,7 @@ function renderTrend(monthly){
     caption.innerHTML = 'Belum ada data skor untuk bulan manapun.';
   } else {
     var last = withData[withData.length-1];
-    caption.innerHTML = 'Tren per bulan (' + monthly.length + ' bulan). ' +
-      '<span style="color:#0F2A47;font-weight:700;">■</span> Skor rata-rata &nbsp; ' +
-      '<span style="color:#F2B705;font-weight:700;">■</span> Realisasi (%). ' +
-      'Bulan terakhir dengan data: ' + last.label + ' (skor ' + fmtScore(last.avg) + ', realisasi ' + last.pct + '%).';
+    caption.innerHTML = 'Tren skor rata-rata per bulan (' + monthly.length + ' bulan). Bulan terakhir dengan data: ' + last.label + ' (skor ' + fmtScore(last.avg) + ').';
   }
 }
 
