@@ -370,7 +370,7 @@
       </div>
     </div>
 
-    <footer id="footerNote">Data input Google Form Self Assessment PS4. Warna sel/bintang: hijau <span class="stars hi" style="font-size:10.5px;">★★★★★</span> (≥90) · kuning <span class="stars mid" style="font-size:10.5px;">★★★–★★★★</span> (80–89) · hitam <span class="stars lo" style="font-size:10.5px;">★–★★</span> (&lt;80) · Auto-refresh setiap 5 menit · <span style="opacity:.55;">versi: 2026-10-08.v19</span></footer>
+    <footer id="footerNote">Data input Google Form Self Assessment PS4. Warna sel/bintang: hijau <span class="stars hi" style="font-size:10.5px;">★★★★★</span> (≥90) · kuning <span class="stars mid" style="font-size:10.5px;">★★★–★★★★</span> (80–89) · hitam <span class="stars lo" style="font-size:10.5px;">★–★★</span> (&lt;80) · Auto-refresh setiap 5 menit · <span style="opacity:.55;">versi: 2026-10-08.v20</span></footer>
 
   </div><!-- END tabPanelPS4 -->
 
@@ -688,7 +688,7 @@ function renderKPIs(){
   document.getElementById('kpiRealisasi').innerHTML=(realisasi===null?'–':realisasi)+' <span style="font-size:13px;color:var(--muted);font-weight:600;">/ '+(target===null?'–':target)+'</span>';
   document.getElementById('kpiRealisasi').classList.remove('skeleton');
   var pct=(target&&realisasi!==null)?Math.round((realisasi/target)*100):null;
-  document.getElementById('kpiRealisasiDesc').innerHTML=pct===null?'&nbsp;':('<span class="down">▼ Baru '+pct+'% unit terisi</span>');
+  document.getElementById('kpiRealisasiDesc').innerHTML=pct===null?'&nbsp;':(pct>=100?'<span class="up">▲ 100% unit telah terisi</span>':'<span class="down">▼ Baru '+pct+'% unit terisi</span>');
   document.getElementById('kpiAvg').textContent=stats.avgAll===null?'–':fmtScore(stats.avgAll);
   document.getElementById('kpiAvg').classList.remove('skeleton');
   document.getElementById('kpiAvgDesc').innerHTML=stats.filledCount?('<span class="up">▲</span> dari '+stats.filledCount+' unit yang sudah terisi'):'Belum ada unit terisi';
