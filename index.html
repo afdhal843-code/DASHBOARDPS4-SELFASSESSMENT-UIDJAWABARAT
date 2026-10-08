@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Dashboard Self Assessment PS4 — UID Jawa Barat</title>
+<title>Dashboard PS4 & Survey Loket — UID Jawa Barat</title>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%230F2A47'/%3E%3Ctext x='50' y='64' font-size='36' text-anchor='middle' fill='%23F2B705' font-family='Segoe UI,Arial,sans-serif' font-weight='700'%3EPS4%3C/text%3E%3C/svg%3E">
 <style>
   :root{
@@ -19,69 +19,71 @@
     --amber:#E0A100;
     --red:#D6473C;
     --radius:10px;
+    --purple:#7C3AED;
+    --purple-light:#EDE9FE;
   }
   *{box-sizing:border-box;}
-  body{
-    margin:0;
-    background:var(--bg);
-    font-family:"Segoe UI",Inter,system-ui,sans-serif;
-    color:var(--text);
-    font-size:14px;
-  }
+  body{margin:0;background:var(--bg);font-family:"Segoe UI",Inter,system-ui,sans-serif;color:var(--text);font-size:14px;}
   .wrap{max-width:1180px;margin:0 auto;padding:20px;}
 
   /* ---- Top bar ---- */
   .topbar{
     display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;
-    background:var(--navy);color:#fff;padding:16px 22px;border-radius:var(--radius);
-    margin-bottom:16px;
+    background:var(--navy);color:#fff;padding:16px 22px;border-radius:var(--radius);margin-bottom:12px;
   }
   .topbar h1{font-size:17px;margin:0;font-weight:700;letter-spacing:.2px;}
   .topbar .sub{font-size:11.5px;color:#C9D6E3;margin-top:2px;font-weight:400;}
   .filters{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
-  .filters select{
-    background:var(--navy-2);color:#fff;border:1px solid #2c5079;
-    border-radius:6px;padding:7px 10px;font-size:12.5px;
-  }
-  .refresh-btn{
-    background:var(--gold);color:#3a2c00;border:none;border-radius:6px;padding:7px 12px;
-    font-size:12.5px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:5px;
-  }
+  .filters select{background:var(--navy-2);color:#fff;border:1px solid #2c5079;border-radius:6px;padding:7px 10px;font-size:12.5px;}
+  .refresh-btn{background:var(--gold);color:#3a2c00;border:none;border-radius:6px;padding:7px 12px;font-size:12.5px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:5px;}
   .refresh-btn:hover{filter:brightness(1.06);}
   .refresh-btn:disabled{opacity:.6;cursor:default;}
   .spin{display:inline-block;animation:spin 1s linear infinite;}
   @keyframes spin{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
 
-  /* ---- Annotation chips ---- */
-  .note{
-    display:inline-block;background:#FFF4D6;color:#7A5A00;border:1px dashed #E0B84A;
-    font-size:10.5px;padding:2px 7px;border-radius:5px;margin-left:6px;font-weight:600;
-    vertical-align:middle;cursor:pointer;
+  /* ---- TAB NAV ---- */
+  .tab-nav{
+    display:flex;gap:0;margin-bottom:16px;
+    background:var(--card);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;
+    box-shadow:0 2px 6px rgba(15,42,71,0.07);
   }
+  .tab-btn{
+    flex:1;padding:14px 20px;font-size:13.5px;font-weight:700;cursor:pointer;
+    border:none;background:transparent;color:var(--muted);transition:all .18s ease;
+    display:flex;align-items:center;justify-content:center;gap:8px;
+    border-bottom:3px solid transparent;
+  }
+  .tab-btn:hover:not(.active){background:#F8F9FB;color:var(--text);}
+  .tab-btn.active.ps4{color:var(--navy);border-bottom-color:var(--navy);background:#EEF2F7;}
+  .tab-btn.active.sl{color:var(--purple);border-bottom-color:var(--purple);background:var(--purple-light);}
+  .tab-btn .tab-badge{
+    display:inline-block;padding:2px 9px;border-radius:12px;font-size:11px;font-weight:700;
+  }
+  .tab-btn.active.ps4 .tab-badge{background:var(--navy);color:#fff;}
+  .tab-btn.active.sl .tab-badge{background:var(--purple);color:#fff;}
+  .tab-btn:not(.active) .tab-badge{background:var(--line);color:var(--muted);}
 
-  /* ---- status / error banners ---- */
-  .banner{
-    border-radius:var(--radius);padding:10px 16px;font-size:12.5px;margin-bottom:14px;
-    display:none;align-items:center;gap:8px;
-  }
+  /* ---- Tab panels ---- */
+  .tab-panel{display:none;}
+  .tab-panel.active{display:block;}
+
+  /* ---- Annotation chips ---- */
+  .note{display:inline-block;background:#FFF4D6;color:#7A5A00;border:1px dashed #E0B84A;font-size:10.5px;padding:2px 7px;border-radius:5px;margin-left:6px;font-weight:600;vertical-align:middle;cursor:pointer;}
+
+  /* ---- Banners ---- */
+  .banner{border-radius:var(--radius);padding:10px 16px;font-size:12.5px;margin-bottom:14px;display:none;align-items:center;gap:8px;}
   .banner.show{display:flex;}
   .banner.error{background:#FBE4E1;color:#8a2a20;border:1px solid #f0b8b0;}
   .banner.info{background:#EAF1FB;color:var(--navy-2);border:1px solid #cfe0f5;}
-  .banner button{
-    margin-left:auto;background:none;border:1px solid currentColor;border-radius:5px;
-    padding:4px 10px;font-size:11.5px;cursor:pointer;color:inherit;
-  }
+  .banner button{margin-left:auto;background:none;border:1px solid currentColor;border-radius:5px;padding:4px 10px;font-size:11.5px;cursor:pointer;color:inherit;}
 
   /* ---- KPI row ---- */
   .kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px;}
-  .kpi{
-    background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
-    padding:14px 16px;position:relative;
-  }
+  .kpi{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px;position:relative;}
   .kpi .label{font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.4px;}
   .kpi .value{font-size:26px;font-weight:800;color:var(--navy);margin-top:4px;font-variant-numeric:tabular-nums;}
   .kpi .delta{font-size:11.5px;margin-top:3px;font-weight:600;color:var(--muted);}
-  .up{color:var(--green)!important;} .down{color:var(--red)!important;}
+  .up{color:var(--green)!important;}.down{color:var(--red)!important;}
   .kpi.gold{border-top:3px solid var(--gold);}
   .kpi.blue{border-top:3px solid var(--navy);}
   .kpi.green{border-top:3px solid var(--green);}
@@ -89,52 +91,33 @@
 
   /* ---- Panel layout ---- */
   .grid{display:grid;grid-template-columns:1.55fr 1fr;gap:14px;margin-bottom:14px;}
-  .panel{
-    background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
-    padding:16px;
-  }
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:16px;}
   .panel h2{font-size:13px;margin:0 0 3px 0;font-weight:700;color:var(--navy);}
   .panel .desc{font-size:11px;color:var(--muted);margin-bottom:12px;}
 
-  /* ---- Heatmap table ---- */
-  .table-scroll{overflow-x:auto;}
-  table{width:100%;border-collapse:collapse;font-size:12px;min-width:520px;}
-
-  /* ---- Compact variant (used for side-by-side UP3 summary table) ---- */
+  /* ---- Compact UP3 table ---- */
   .table-compact{overflow-x:visible;}
   .table-compact table{font-size:9px;min-width:0;table-layout:fixed;}
   .table-compact .unit-name{font-size:8.5px;line-height:1.2;}
-  .table-compact th{
-    font-size:8px;padding:5px 1px;white-space:nowrap;overflow:hidden;
-    text-overflow:ellipsis;letter-spacing:0;text-align:center;
-  }
+  .table-compact th{font-size:8px;padding:5px 1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:0;text-align:center;}
   .table-compact th:first-child{text-align:left;}
   .table-compact td{padding:4px 1px;white-space:normal;overflow-wrap:anywhere;text-align:center;}
   .table-compact .score{min-width:0;padding:1px 2px;font-size:9px;}
   .table-compact .stars{font-size:7px;letter-spacing:-0.5px;white-space:nowrap;}
   .table-compact th:nth-child(1),.table-compact td:nth-child(1){width:19%;text-align:left;overflow-wrap:break-word;hyphens:auto;}
   .table-compact th:nth-child(2),.table-compact td:nth-child(2){width:8%;}
-  .table-compact th:nth-child(3),.table-compact td:nth-child(3),
-  .table-compact th:nth-child(4),.table-compact td:nth-child(4),
-  .table-compact th:nth-child(5),.table-compact td:nth-child(5),
-  .table-compact th:nth-child(6),.table-compact td:nth-child(6){width:8.5%;}
-  .table-compact th:nth-child(7),.table-compact td:nth-child(7),
-  .table-compact th:nth-child(8),.table-compact td:nth-child(8),
-  .table-compact th:nth-child(9),.table-compact td:nth-child(9){width:8%;}
+  .table-compact th:nth-child(n+3):nth-child(-n+9),.table-compact td:nth-child(n+3):nth-child(-n+9){width:8.5%;}
   .table-compact th:nth-child(10),.table-compact td:nth-child(10){width:15%;white-space:nowrap;}
-  th{
-    text-align:left;color:var(--muted);font-weight:600;font-size:10.5px;
-    text-transform:uppercase;letter-spacing:.3px;padding:6px 8px;border-bottom:2px solid var(--line);
-    cursor:pointer;user-select:none;white-space:nowrap;
-  }
+
+  /* ---- Table base ---- */
+  .table-scroll{overflow-x:auto;}
+  table{width:100%;border-collapse:collapse;font-size:12px;min-width:520px;}
+  th{text-align:left;color:var(--muted);font-weight:600;font-size:10.5px;text-transform:uppercase;letter-spacing:.3px;padding:6px 8px;border-bottom:2px solid var(--line);cursor:pointer;user-select:none;white-space:nowrap;}
   th:hover{color:var(--navy-2);}
   th .arrow{font-size:9px;margin-left:2px;}
   td{padding:7px 8px;border-bottom:1px solid var(--line);white-space:nowrap;}
   tr.up3row td{background:#EEF2F7;font-weight:700;color:var(--navy-2);}
-  .score{
-    display:inline-block;min-width:30px;text-align:center;border-radius:5px;padding:2px 6px;
-    font-weight:700;font-variant-numeric:tabular-nums;
-  }
+  .score{display:inline-block;min-width:30px;text-align:center;border-radius:5px;padding:2px 6px;font-weight:700;font-variant-numeric:tabular-nums;}
   .s-hi{background:#E4F6ED;color:var(--green);}
   .s-mid{background:#FFF3D6;color:var(--amber);}
   .s-lo{background:#ECEDEF;color:#1B1B1B;}
@@ -148,78 +131,83 @@
   .unit-name.child{padding-left:14px;color:var(--muted);}
   .empty-row td{color:#C3CCD6;}
 
-  /* ---- Bar chart (aspect comparison) ---- */
+  /* ---- Bar chart ---- */
   .bar-row{display:flex;align-items:center;gap:8px;margin-bottom:9px;}
   .bar-label{width:78px;font-size:11px;color:var(--muted);flex-shrink:0;}
   .bar-track{flex:1;background:#EEF1F5;border-radius:5px;height:14px;overflow:hidden;}
   .bar-fill{height:100%;border-radius:5px;background:var(--navy);transition:width .4s ease;}
   .bar-val{width:32px;text-align:right;font-size:11px;font-weight:700;color:var(--navy);font-variant-numeric:tabular-nums;}
 
-  /* ---- Donut (star distribution) ---- */
+  /* ---- Donut ---- */
   .donut-wrap{display:flex;align-items:center;gap:16px;flex-wrap:wrap;}
   .legend{font-size:11.5px;}
   .legend div{display:flex;align-items:center;gap:6px;margin-bottom:6px;}
   .dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
 
-  /* ---- Trend line (mini svg) ---- */
+  /* ---- Trend ---- */
   .trend-caption{font-size:11px;color:var(--muted);margin-top:6px;}
 
-  footer{
-    text-align:center;font-size:10.5px;color:var(--muted);padding:14px 0 4px;
-  }
-  footer a{color:var(--navy-2);}
+  footer{text-align:center;font-size:10.5px;color:var(--muted);padding:14px 0 4px;}
 
-  .skeleton{
-    background:linear-gradient(90deg,#eef1f5 25%,#e4e9ef 37%,#eef1f5 63%);
-    background-size:400% 100%;animation:shimmer 1.4s ease infinite;border-radius:6px;
-  }
+  .skeleton{background:linear-gradient(90deg,#eef1f5 25%,#e4e9ef 37%,#eef1f5 63%);background-size:400% 100%;animation:shimmer 1.4s ease infinite;border-radius:6px;}
   @keyframes shimmer{0%{background-position:100% 0;}100%{background-position:0 0;}}
 
-  /* ---- Export PDF button + popup pilihan bagian ---- */
-  .export-btn{
-    background:#fff;color:var(--navy);border:none;border-radius:6px;padding:7px 12px;
-    font-size:12.5px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:5px;
-  }
+  /* ---- Export PDF ---- */
+  .export-btn{background:#fff;color:var(--navy);border:none;border-radius:6px;padding:7px 12px;font-size:12.5px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:5px;}
   .export-btn:hover{filter:brightness(0.96);}
-  .export-popup{
-    display:none;position:absolute;right:0;top:calc(100% + 8px);z-index:20;
-    background:#fff;color:var(--text);border:1px solid var(--line);border-radius:8px;
-    padding:12px 14px;width:230px;box-shadow:0 6px 18px rgba(15,42,71,0.18);
-  }
+  .export-popup{display:none;position:absolute;right:0;top:calc(100% + 8px);z-index:20;background:#fff;color:var(--text);border:1px solid var(--line);border-radius:8px;padding:12px 14px;width:270px;box-shadow:0 6px 18px rgba(15,42,71,0.18);}
   .export-popup.show{display:block;}
   .export-popup-title{font-size:11.5px;font-weight:700;color:var(--navy);margin-bottom:8px;}
   .export-popup label{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--text);margin-bottom:7px;cursor:pointer;}
   .export-popup input[type="checkbox"]{margin:0;flex-shrink:0;}
   .export-popup-actions{display:flex;justify-content:flex-end;gap:6px;margin-top:6px;}
-  .export-popup-actions button{
-    border:1px solid var(--line);background:var(--bg);color:var(--text);border-radius:5px;
-    padding:5px 10px;font-size:11.5px;font-weight:700;cursor:pointer;
-  }
+  .export-popup-actions button{border:1px solid var(--line);background:var(--bg);color:var(--text);border-radius:5px;padding:5px 10px;font-size:11.5px;font-weight:700;cursor:pointer;}
   .export-popup-actions button:last-child{background:var(--navy);color:#fff;border-color:var(--navy);}
+  .export-sep{border:none;border-top:1px dashed var(--line);margin:6px 0 8px;}
+  .export-group-label{font-size:9.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin:0 0 5px;}
 
-  /* ---- Cetak / Export PDF (lewat dialog print browser) ---- */
+  /* ---- Print ---- */
   @media print{
     body{background:#fff;}
     .wrap{max-width:100%;padding:8px;}
-    .filters select, #refreshBtn, #exportPdfBtn, .refresh-btn, .export-btn, .export-popup{display:none !important;}
+    .filters select,#refreshBtn,#exportPdfBtn,.refresh-btn,.export-btn,.export-popup,.tab-nav{display:none !important;}
     .banner{display:none !important;}
     .grid{grid-template-columns:1fr;}
-    .panel, .kpi, .topbar, table{break-inside:avoid;page-break-inside:avoid;}
+    .panel,.kpi,.topbar,table{break-inside:avoid;page-break-inside:avoid;}
+    .tab-panel{display:block !important;}
     .print-hide{display:none !important;}
-    *{
-      -webkit-print-color-adjust:exact !important;
-      print-color-adjust:exact !important;
-      color-adjust:exact !important;
-    }
+    *{-webkit-print-color-adjust:exact !important;print-color-adjust:exact !important;color-adjust:exact !important;}
   }
+
+  /* ================================================================
+     SURVEY LOKET STYLES
+     ================================================================ */
+  .sl-banner{
+    display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;
+    background:linear-gradient(135deg,#4C1D95 0%,#7C3AED 100%);
+    color:#fff;padding:16px 22px;border-radius:var(--radius);margin-bottom:12px;
+  }
+  .sl-banner strong{font-size:16px;font-weight:700;}
+  .sl-banner-sub{font-size:11.5px;color:#DDD6FE;margin-top:3px;}
+  .sl-chip{display:inline-block;background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.28);border-radius:20px;padding:5px 14px;font-size:12.5px;font-weight:600;color:#fff;}
+  .kpi.sl-purple{border-top:3px solid var(--purple);}
+  .kpi.sl-teal{border-top:3px solid #0D9488;}
+  .kpi.sl-indigo{border-top:3px solid #4F46E5;}
+  .kpi.sl-pink{border-top:3px solid #DC2626;}
+  .sl-score-badge{display:inline-block;padding:2px 8px;border-radius:5px;font-size:11px;font-weight:700;}
+  .sl-sb{background:#E4F6ED;color:var(--green);}
+  .sl-b{background:#EAF1FB;color:var(--navy-2);}
+  .sl-c{background:#FFF3D6;color:var(--amber);}
+  .sl-k{background:#FBE4E1;color:var(--red);}
 </style>
 </head>
 <body>
 <div class="wrap">
 
+  <!-- ===== TOP BAR ===== -->
   <div class="topbar">
     <div>
-      <h1>Monitoring PS4 — Penampilan · Sikap · Senyum · Salam · Sapa</h1>
+      <h1>Dashboard Monitoring Pelayanan — UID Jawa Barat</h1>
       <div class="sub" id="subLabel">Memuat…</div>
     </div>
     <div class="filters">
@@ -230,6 +218,10 @@
         <button class="export-btn" id="exportPdfBtn" onclick="toggleExportPopup()">⬇ Export PDF</button>
         <div class="export-popup" id="exportPopup">
           <div class="export-popup-title">Sertakan di PDF:</div>
+          <p class="export-group-label">Survey Pelayanan Loket</p>
+          <label><input type="checkbox" class="exportChk" data-target="slSection" checked> Survey Pelayanan Loket</label>
+          <hr class="export-sep">
+          <p class="export-group-label">Monitoring PS4</p>
           <label><input type="checkbox" class="exportChk" data-target="panelSkorUnit" checked> Skor per Unit (tabel heatmap)</label>
           <label><input type="checkbox" class="exportChk" data-target="panelAspek" checked> Rata-rata per Aspek PS4</label>
           <label><input type="checkbox" class="exportChk" data-target="panelDonut" checked> Distribusi Status Bintang</label>
@@ -244,8 +236,9 @@
     </div>
   </div>
 
+  <!-- ===== BANNERS ===== -->
   <div class="banner error" id="errorBanner">
-    <span>⚠ Gagal memuat data dari Google Sheet. Periksa koneksi internet, dan pastikan sheet masih bisa diakses ("Anyone with the link").</span>
+    <span>⚠ Gagal memuat data dari Google Sheet. Periksa koneksi internet.</span>
     <button onclick="manualRefresh()">Coba lagi</button>
   </div>
   <div class="banner info" id="infoBanner">
@@ -253,136 +246,245 @@
     <button onclick="document.getElementById('infoBanner').classList.remove('show')">Tutup</button>
   </div>
 
-  <div class="kpi-row" id="kpiRow">
-    <div class="kpi blue">
-      <div class="label">Target ULP Dinilai</div>
-      <div class="value skeleton" id="kpiTarget">&nbsp;</div>
-      <div class="delta" id="kpiTargetDesc">Jumlah unit dalam cakupan</div>
-    </div>
-    <div class="kpi red">
-      <div class="label">Realisasi Input</div>
-      <div class="value skeleton" id="kpiRealisasi">&nbsp;</div>
-      <div class="delta" id="kpiRealisasiDesc">&nbsp;</div>
-    </div>
-    <div class="kpi gold">
-      <div class="label">Avg Skor Penerapan PS4</div>
-      <div class="value skeleton" id="kpiAvg">&nbsp;</div>
-      <div class="delta" id="kpiAvgDesc">dari unit yang sudah terisi</div>
-    </div>
-    <div class="kpi green">
-      <div class="label" id="kpiTopLabel">Unit Bintang 5 (≥90)</div>
-      <div class="value skeleton" id="kpiTop">&nbsp;</div>
-      <div class="delta" id="kpiTopDesc">&nbsp;</div>
-    </div>
+  <!-- ===== TAB NAVIGATION ===== -->
+  <div class="tab-nav">
+    <button class="tab-btn ps4 active" id="tabBtnPS4" onclick="switchTab('ps4')">
+      <span>📋 Monitoring PS4</span>
+      <span class="tab-badge" id="tabBadgePS4">Self Assessment</span>
+    </button>
+    <button class="tab-btn sl" id="tabBtnSL" onclick="switchTab('sl')">
+      <span>🏦 Survey Pelayanan Loket</span>
+      <span class="tab-badge" id="tabBadgeSL">Survey Pelanggan</span>
+    </button>
   </div>
 
-  <div class="grid">
-    <div class="panel" id="panelSkorUnit">
-      <h2>Skor per Unit
-        <span class="note" id="sortResetNote" onclick="resetSort()" style="display:none;">reset urutan / grouping</span>
-      </h2>
-      <div class="desc"> hijau <span class="stars hi" style="font-size:11px;">★★★★★</span> (≥90), kuning <span class="stars mid" style="font-size:11px;">★★★/★★★★</span> (80–89), hitam <span class="stars lo" style="font-size:11px;">★/★★</span> (&lt;80).</div>
-      <div class="table-scroll">
-      <table>
-        <thead>
-          <tr id="tableHeadRow">
-            <th data-key="name">UP3 / ULP</th>
-            <th data-key="frontliner">Frontliner</th>
-            <th data-key="security">Security</th>
-            <th data-key="yantek">Yantek</th>
-            <th data-key="billman">Billman</th>
-            <th data-key="p2tl">P2TL</th>
-            <th data-key="yanbung">Yanbung</th>
-            <th data-key="avg">Avg</th>
-            <th data-key="status">Status</th>
-          </tr>
-        </thead>
-        <tbody id="tableBody">
-          <tr><td colspan="9" class="skeleton" style="height:22px;"></td></tr>
-        </tbody>
-      </table>
+  <!-- ================================================================
+       TAB PANEL 1 — MONITORING PS4
+       ================================================================ -->
+  <div class="tab-panel active" id="tabPanelPS4">
+
+    <div class="kpi-row" id="kpiRow">
+      <div class="kpi blue">
+        <div class="label">Target ULP Dinilai</div>
+        <div class="value skeleton" id="kpiTarget">&nbsp;</div>
+        <div class="delta" id="kpiTargetDesc">Jumlah unit dalam cakupan</div>
+      </div>
+      <div class="kpi red">
+        <div class="label">Realisasi Input</div>
+        <div class="value skeleton" id="kpiRealisasi">&nbsp;</div>
+        <div class="delta" id="kpiRealisasiDesc">&nbsp;</div>
+      </div>
+      <div class="kpi gold">
+        <div class="label">Avg Skor Penerapan PS4</div>
+        <div class="value skeleton" id="kpiAvg">&nbsp;</div>
+        <div class="delta" id="kpiAvgDesc">dari unit yang sudah terisi</div>
+      </div>
+      <div class="kpi green">
+        <div class="label" id="kpiTopLabel">Unit Bintang 5 (≥90)</div>
+        <div class="value skeleton" id="kpiTop">&nbsp;</div>
+        <div class="delta" id="kpiTopDesc">&nbsp;</div>
       </div>
     </div>
 
-    <div style="display:flex;flex-direction:column;gap:14px;">
-      <div class="panel" id="panelAspek">
-        <h2>Skor per Aspek PS4</h2>
-        <div class="desc">6 komponen penilaian &amp; Bulan).</div>
-        <div id="barChart">
-          <div class="bar-row"><div class="bar-label">Frontliner</div><div class="bar-track"><div class="bar-fill" style="width:0%;"></div></div><div class="bar-val">–</div></div>
-        </div>
-      </div>
-
-      <div class="panel" id="panelDonut">
-        <h2>Distribusi Status Bintang</h2>
-        <div class="desc">Sebaran unit berdasarkan skor rata-rata akhir </div>
-        <div class="donut-wrap">
-          <svg width="90" height="90" viewBox="0 0 42 42" id="donutSvg">
-            <circle cx="21" cy="21" r="15.9" fill="transparent" stroke="#EEF1F5" stroke-width="6"></circle>
-          </svg>
-          <div class="legend" id="donutLegend"></div>
-        </div>
-      </div>
-
-      <div class="panel" id="panelUp3Summary">
-        <h2>Skor per UP3 <span class="note">semua UP3 </span></h2>
-        <div class="desc">Ringkasan agregat tiap UP3 per indikator PS4.</div>
-        <div class="table-scroll table-compact">
+    <div class="grid">
+      <div class="panel" id="panelSkorUnit">
+        <h2>Skor per Unit
+          <span class="note" id="sortResetNote" onclick="resetSort()" style="display:none;">reset urutan / grouping</span>
+        </h2>
+        <div class="desc">hijau <span class="stars hi" style="font-size:11px;">★★★★★</span> (≥90), kuning <span class="stars mid" style="font-size:11px;">★★★/★★★★</span> (80–89), hitam <span class="stars lo" style="font-size:11px;">★/★★</span> (&lt;80).</div>
+        <div class="table-scroll">
         <table>
           <thead>
-            <tr id="up3SummaryHead">
-              <th data-key="name">UP3</th>
-              <th data-key="realisasi" title="Realisasi">R</th>
-              <th data-key="frontliner" title="Frontliner">FL</th>
-              <th data-key="security" title="Security">SC</th>
-              <th data-key="yantek" title="Yantek">YT</th>
-              <th data-key="billman" title="Billman">BM</th>
-              <th data-key="p2tl" title="P2TL">P2</th>
-              <th data-key="yanbung" title="Yanbung">YB</th>
-              <th data-key="avg" title="Avg">Av</th>
-              <th data-key="status" title="Status">St</th>
+            <tr id="tableHeadRow">
+              <th data-key="name">UP3 / ULP</th>
+              <th data-key="frontliner">Frontliner</th>
+              <th data-key="security">Security</th>
+              <th data-key="yantek">Yantek</th>
+              <th data-key="billman">Billman</th>
+              <th data-key="p2tl">P2TL</th>
+              <th data-key="yanbung">Yanbung</th>
+              <th data-key="avg">Avg</th>
+              <th data-key="status">Status</th>
             </tr>
           </thead>
-          <tbody id="up3SummaryBody">
-            <tr><td colspan="10" class="skeleton" style="height:18px;"></td></tr>
+          <tbody id="tableBody">
+            <tr><td colspan="9" class="skeleton" style="height:22px;"></td></tr>
           </tbody>
         </table>
         </div>
       </div>
+
+      <div style="display:flex;flex-direction:column;gap:14px;">
+        <div class="panel" id="panelAspek">
+          <h2>Skor per Aspek PS4</h2>
+          <div class="desc">6 komponen penilaian.</div>
+          <div id="barChart">
+            <div class="bar-row"><div class="bar-label">Frontliner</div><div class="bar-track"><div class="bar-fill" style="width:0%;"></div></div><div class="bar-val">–</div></div>
+          </div>
+        </div>
+
+        <div class="panel" id="panelDonut">
+          <h2>Distribusi Status Bintang</h2>
+          <div class="desc">Sebaran unit berdasarkan skor rata-rata</div>
+          <div class="donut-wrap">
+            <svg width="90" height="90" viewBox="0 0 42 42" id="donutSvg">
+              <circle cx="21" cy="21" r="15.9" fill="transparent" stroke="#EEF1F5" stroke-width="6"></circle>
+            </svg>
+            <div class="legend" id="donutLegend"></div>
+          </div>
+        </div>
+
+        <div class="panel" id="panelUp3Summary">
+          <h2>Skor per UP3 <span class="note">semua UP3</span></h2>
+          <div class="desc">Ringkasan agregat tiap UP3 per indikator PS4.</div>
+          <div class="table-scroll table-compact">
+          <table>
+            <thead>
+              <tr id="up3SummaryHead">
+                <th data-key="name">UP3</th>
+                <th data-key="realisasi" title="Realisasi">R</th>
+                <th data-key="frontliner" title="Frontliner">FL</th>
+                <th data-key="security" title="Security">SC</th>
+                <th data-key="yantek" title="Yantek">YT</th>
+                <th data-key="billman" title="Billman">BM</th>
+                <th data-key="p2tl" title="P2TL">P2</th>
+                <th data-key="yanbung" title="Yanbung">YB</th>
+                <th data-key="avg" title="Avg">Av</th>
+                <th data-key="status" title="Status">St</th>
+              </tr>
+            </thead>
+            <tbody id="up3SummaryBody">
+              <tr><td colspan="10" class="skeleton" style="height:18px;"></td></tr>
+            </tbody>
+          </table>
+          </div>
+        </div>
+      </div>
     </div>
-  </div>
 
-  <div class="panel" id="panelTrend">
-    <h2>Tren Skor PS4 <span class="note">hasil input Self Assessment PS4 UID Jawa Barat 2026</span></h2>
-    <div id="trendChartWrap">
-      <svg width="100%" height="130" viewBox="0 0 1100 130" preserveAspectRatio="none" id="trendSvg"></svg>
+    <div class="panel" id="panelTrend">
+      <h2>Tren Skor PS4 <span class="note">Self Assessment PS4 UID Jawa Barat 2026</span></h2>
+      <div id="trendChartWrap">
+        <svg width="100%" height="130" viewBox="0 0 1100 130" preserveAspectRatio="none" id="trendSvg"></svg>
+      </div>
+      <div class="trend-caption" id="trendCaption">Memuat riwayat…</div>
     </div>
-    <div class="trend-caption" id="trendCaption">Memuat riwayat lokal…</div>
-  </div>
 
-  <footer id="footerNote">Data input Google Form Self Assessment PS4. Warna sel/bintang: hijau <span class="stars hi" style="font-size:10.5px;">★★★★★</span> (≥90) · kuning <span class="stars mid" style="font-size:10.5px;">★★★–★★★★</span> (80–89) · hitam <span class="stars lo" style="font-size:10.5px;">★–★★</span> (&lt;80) · Auto-refresh setiap 5 menit · <span style="opacity:.55;">— versi file: 2026-08-28.v16</span></footer>
-</div>
+    <footer id="footerNote">Data input Google Form Self Assessment PS4. Warna sel/bintang: hijau <span class="stars hi" style="font-size:10.5px;">★★★★★</span> (≥90) · kuning <span class="stars mid" style="font-size:10.5px;">★★★–★★★★</span> (80–89) · hitam <span class="stars lo" style="font-size:10.5px;">★–★★</span> (&lt;80) · Auto-refresh setiap 5 menit · <span style="opacity:.55;">versi: 2026-10-08.v17</span></footer>
 
+  </div><!-- END tabPanelPS4 -->
+
+  <!-- ================================================================
+       TAB PANEL 2 — SURVEY PELAYANAN LOKET
+       ================================================================ -->
+  <div class="tab-panel" id="tabPanelSL">
+    <div id="slSection">
+
+      <!-- SL Banner -->
+      <div class="sl-banner" id="slBanner">
+        <div>
+          <strong>Survey Pelayanan Loket — <span id="slBannerScope">Semua UP3</span></strong>
+          <div class="sl-banner-sub" id="slBannerSub">Memuat data survey…</div>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+          <span class="sl-chip" id="slChipResponden">Memuat…</span>
+          <span class="sl-chip" id="slChipUnits">Memuat…</span>
+        </div>
+      </div>
+
+      <!-- SL KPI Cards -->
+      <div class="kpi-row" id="slKpiRow">
+        <div class="kpi sl-purple">
+          <div class="label">Rata-rata Skor Loket</div>
+          <div class="value skeleton" id="slKpiAvg">&nbsp;</div>
+          <div class="delta" id="slKpiAvgDesc">skala 1–5</div>
+        </div>
+        <div class="kpi sl-teal">
+          <div class="label">Responden Periode Ini</div>
+          <div class="value skeleton" id="slKpiN">&nbsp;</div>
+          <div class="delta" id="slKpiNDesc">bulan dipilih</div>
+        </div>
+        <div class="kpi sl-indigo">
+          <div class="label">Unit Sangat Baik (≥4.5)</div>
+          <div class="value skeleton" id="slKpiSB">&nbsp;</div>
+          <div class="delta" id="slKpiSBDesc">&nbsp;</div>
+        </div>
+        <div class="kpi sl-pink">
+          <div class="label">Unit Perlu Perhatian (&lt;3.5)</div>
+          <div class="value skeleton" id="slKpiK">&nbsp;</div>
+          <div class="delta" id="slKpiKDesc">&nbsp;</div>
+        </div>
+      </div>
+
+      <!-- SL Charts Grid -->
+      <div class="grid" id="slGrid">
+        <div class="panel" id="panelSLAspek">
+          <h2>Skor per Aspek — Pelayanan Loket</h2>
+          <div class="desc">Rata-rata penilaian pelanggan per aspek (skala 1–5)</div>
+          <div id="slBarChart">
+            <div class="bar-row">
+              <div class="bar-label" style="width:130px;">Memuat…</div>
+              <div class="bar-track"><div class="bar-fill" style="width:0%;background:var(--purple);"></div></div>
+              <div class="bar-val">–</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel" id="panelSLTrend">
+          <h2>Tren Rata-rata Skor — Survey Loket</h2>
+          <div class="desc" id="slTrendDesc">Rata-rata skor bulanan · garis putus = target 4.5</div>
+          <div style="overflow-x:auto;">
+            <svg width="100%" height="130" viewBox="0 0 560 130" preserveAspectRatio="none" id="slTrendSvg">
+              <rect width="560" height="130" fill="none"/>
+            </svg>
+          </div>
+          <div class="trend-caption" id="slTrendCaption">Memuat tren…</div>
+        </div>
+      </div>
+
+      <footer style="text-align:center;font-size:10.5px;color:var(--muted);padding:14px 0 4px;">
+        Data dari Google Form Survey Pelayanan Loket · skala 1–5 · UP3/ULP dikunci dari sheet MONITORING
+      </footer>
+
+    </div>
+  </div><!-- END tabPanelSL -->
+
+</div><!-- .wrap -->
+
+<!-- ============================================================
+     TAB SWITCHING
+     ============================================================ -->
+<script>
+var activeTab = 'ps4';
+function switchTab(tab){
+  activeTab = tab;
+  document.getElementById('tabPanelPS4').classList.toggle('active', tab==='ps4');
+  document.getElementById('tabPanelSL').classList.toggle('active', tab==='sl');
+  document.getElementById('tabBtnPS4').classList.toggle('active', tab==='ps4');
+  document.getElementById('tabBtnSL').classList.toggle('active', tab==='sl');
+  if(tab==='sl' && typeof renderSLAll === 'function' && typeof slState !== 'undefined' && slState.loaded){
+    renderSLAll();
+  }
+}
+</script>
+
+<!-- ============================================================
+     PS4 SCRIPT — TIDAK DIUBAH
+     ============================================================ -->
 <script>
 // ============ CONFIG ============
 var SHEET_ID = '1aqbEcH-9sH7pUKcgAtutX-FDWm3mnpa6pTnRNkNmc5w';
-var SHEET_NAME_REKAP = 'REKAP SKOR';   // master daftar 92 unit (UP3/ULP)
-var SHEET_NAME_DATA  = 'DATA SKOR';    // riwayat skor per bulan (MONTH_KEY,BULAN,UP3,ULP,...)
-var AUTO_REFRESH_MS = 5 * 60 * 1000; // 5 menit
+var SHEET_NAME_REKAP = 'REKAP SKOR';
+var SHEET_NAME_DATA  = 'DATA SKOR';
+var AUTO_REFRESH_MS = 5 * 60 * 1000;
 var FETCH_TIMEOUT_MS = 15000;
 
 var state = {
-  skeleton: [],        // master groups from REKAP SKOR: [{name, units:[{name}]}]
-  groups: [],          // groups for the currently selected month (skeleton merged with DATA SKOR)
-  dataSkorRows: [],    // flat rows from DATA SKOR: {monthKey, monthLabel, up3, ulp, frontliner,...}
-  monthList: [],       // [{key, label}] sorted desc
-  activeMonth: '',
-  up3List: [],
-  activeUp3: '',
-  sortKey: null,
-  sortDir: 'desc',
-  up3SortKey: null,
-  up3SortDir: 'desc'
+  skeleton: [], groups: [], dataSkorRows: [],
+  monthList: [], activeMonth: '',
+  up3List: [], activeUp3: '',
+  sortKey: null, sortDir: 'desc',
+  up3SortKey: null, up3SortDir: 'desc'
 };
 
 var ASPECTS = [
@@ -394,626 +496,341 @@ var ASPECTS = [
   {key:'yanbung',    label:'Yanbung'}
 ];
 
-// ============ FETCH (JSONP via script tag, bypasses CORS) ============
 function fetchSheetByName(sheetName, onData, onError){
   var cbName = 'gvizCb_' + Math.floor(Math.random()*1e9);
   var done = false;
   var script = document.createElement('script');
-
   var timer = setTimeout(function(){
-    if(done) return;
-    done = true;
-    cleanup();
-    onError(new Error('timeout: ' + sheetName));
+    if(done) return; done=true; cleanup();
+    onError(new Error('timeout: '+sheetName));
   }, FETCH_TIMEOUT_MS);
-
   function cleanup(){
     clearTimeout(timer);
-    try{ delete window[cbName]; }catch(e){ window[cbName] = undefined; }
+    try{ delete window[cbName]; }catch(e){ window[cbName]=undefined; }
     if(script.parentNode) script.parentNode.removeChild(script);
   }
-
-  window[cbName] = function(json){
-    if(done) return;
-    done = true;
-    cleanup();
-    onData(json);
-  };
-
-  script.onerror = function(){
-    if(done) return;
-    done = true;
-    cleanup();
-    onError(new Error('script load error: ' + sheetName));
-  };
-
-  // range=A1:R2000 dipasang eksplisit supaya gviz tidak memotong baris terakhir kalau metadata
-  // "used range" internalnya sempat telat mengikuti baris baru yang ditambahkan di sheet
-  // (pernah kejadian: jumlah ULP kebaca 91, bukan 92, karena baris terakhir tidak ikut terbawa).
-  var url = 'https://docs.google.com/spreadsheets/d/' + SHEET_ID + '/gviz/tq'
-    + '?sheet=' + encodeURIComponent(sheetName)
-    + '&range=A1:R2000'
-    + '&headers=0'
-    + '&tqx=out:json;responseHandler:' + cbName
-    + '&_ts=' + Date.now();
-
-  script.src = url;
+  window[cbName] = function(json){ if(done) return; done=true; cleanup(); onData(json); };
+  script.onerror = function(){ if(done) return; done=true; cleanup(); onError(new Error('load err: '+sheetName)); };
+  script.src = 'https://docs.google.com/spreadsheets/d/'+SHEET_ID+'/gviz/tq'
+    +'?sheet='+encodeURIComponent(sheetName)
+    +'&range=A1:R2000&headers=0'
+    +'&tqx=out:json;responseHandler:'+cbName
+    +'&_ts='+Date.now();
   document.body.appendChild(script);
 }
 
-// ============ PARSE ============
 function cellVal(row, idx){
-  if(!row || !row.c || !row.c[idx]) return null;
-  var c = row.c[idx];
-  return (c && typeof c.v !== 'undefined') ? c.v : null;
+  if(!row||!row.c||!row.c[idx]) return null;
+  var c=row.c[idx];
+  return (c&&typeof c.v!=='undefined')?c.v:null;
 }
-
 function normKey(s){ return String(s||'').trim().toUpperCase(); }
 
-// Master skeleton: daftar tetap 92 unit (UP3 & ULP) dari sheet REKAP SKOR.
-// Kolom skor/avg/status di sheet ini diabaikan (itu cuma refleksi bulan yang lagi aktif di C5),
-// yang dipakai cuma struktur UP3->ULP-nya.
 function parseSkeleton(json){
-  if(!json || !json.table || !json.table.rows) throw new Error('format tidak dikenali (REKAP SKOR)');
-  var rows = json.table.rows;
-  if(rows.length < 2) throw new Error('data REKAP SKOR terlalu sedikit — cek nama sheet');
-
-  var groups = [];
-  var groupIndex = {}; // name -> index di groups, jaga-jaga kalau ada baris UP3 duplikat/terpisah
-  var currentGroup = null;
-  var sawAnyUlp = false;
-
-  // Sengaja scan SEMUA baris (bukan mulai dari indeks tetap seperti baris 8) — baris judul/header
-  // di atasnya (baris 1-7) tidak diawali "UP3"/"ULP" jadi otomatis diabaikan. Ini menghindari bug
-  // di mana baris pertama data ULP hilang kalau endpoint gviz Google Sheets sesekali menggeser/
-  // memperlakukan 1 baris sebagai header meski parameter headers=0 sudah dipasang.
-  for(var i = 0; i < rows.length; i++){
-    var r = rows[i];
-    var groupNameRaw = cellVal(r, 0);
-    var unitNameRaw = cellVal(r, 1);
-    if(unitNameRaw === null) continue;
-    // trim + cek prefix case-insensitive, supaya spasi/karakter tak kasat mata atau
-    // beda kapitalisasi di sel sheet tidak bikin 1 baris ULP tidak terhitung.
-    var unitName = String(unitNameRaw).trim();
-    var groupName = groupNameRaw === null ? null : String(groupNameRaw).trim();
-    var unitUpper = unitName.toUpperCase();
-
-    if(unitUpper.indexOf('UP3') === 0){
-      var gName = groupName || unitName;
-      if(Object.prototype.hasOwnProperty.call(groupIndex, gName)){
-        currentGroup = groups[groupIndex[gName]]; // gabung ke grup yang sama kalau nama UP3-nya sama
+  if(!json||!json.table||!json.table.rows) throw new Error('format tidak dikenali (REKAP SKOR)');
+  var rows=json.table.rows;
+  if(rows.length<2) throw new Error('data REKAP SKOR terlalu sedikit');
+  var groups=[],groupIndex={},currentGroup=null,sawAnyUlp=false;
+  for(var i=0;i<rows.length;i++){
+    var r=rows[i];
+    var groupNameRaw=cellVal(r,0);
+    var unitNameRaw=cellVal(r,1);
+    if(unitNameRaw===null) continue;
+    var unitName=String(unitNameRaw).trim();
+    var groupName=groupNameRaw===null?null:String(groupNameRaw).trim();
+    var unitUpper=unitName.toUpperCase();
+    if(unitUpper.indexOf('UP3')===0){
+      var gName=groupName||unitName;
+      if(Object.prototype.hasOwnProperty.call(groupIndex,gName)){
+        currentGroup=groups[groupIndex[gName]];
       } else {
-        currentGroup = { name: gName, units: [] };
-        groupIndex[gName] = groups.length;
+        currentGroup={name:gName,units:[]};
+        groupIndex[gName]=groups.length;
         groups.push(currentGroup);
       }
-    } else if(unitUpper.indexOf('ULP') === 0){
-      sawAnyUlp = true;
+    } else if(unitUpper.indexOf('ULP')===0){
+      sawAnyUlp=true;
       if(!currentGroup){
-        var fallbackName = groupName || 'Lainnya';
-        if(Object.prototype.hasOwnProperty.call(groupIndex, fallbackName)){
-          currentGroup = groups[groupIndex[fallbackName]];
-        } else {
-          currentGroup = { name: fallbackName, units: [] };
-          groupIndex[fallbackName] = groups.length;
+        var fn=groupName||'Lainnya';
+        if(!Object.prototype.hasOwnProperty.call(groupIndex,fn)){
+          currentGroup={name:fn,units:[]};
+          groupIndex[fn]=groups.length;
           groups.push(currentGroup);
-        }
+        } else { currentGroup=groups[groupIndex[fn]]; }
       }
-      currentGroup.units.push({ name: unitName });
+      currentGroup.units.push({name:unitName});
     }
   }
-
-  if(!sawAnyUlp) throw new Error('tidak ditemukan baris ULP di REKAP SKOR — struktur sheet berubah?');
+  if(!sawAnyUlp) throw new Error('tidak ditemukan baris ULP di REKAP SKOR');
   return groups;
 }
 
-// Riwayat skor per bulan dari sheet DATA SKOR (long format, 1 baris = 1 unit di 1 bulan).
-// Kolom: MONTH_KEY, BULAN, UP3, ULP, SKOR FRONTLINER, SECURITY, YANTEK, BILLMAN, P2TL, YANBUNG
 function parseDataSkor(json){
-  if(!json || !json.table || !json.table.rows) throw new Error('format tidak dikenali (DATA SKOR)');
-  var rows = json.table.rows;
-  var out = [];
-  for(var i = 1; i < rows.length; i++){ // baris 0 = header
-    var r = rows[i];
-    var up3 = cellVal(r, 2);
-    var ulp = cellVal(r, 3);
-    if(up3 === null || ulp === null) continue;
+  if(!json||!json.table||!json.table.rows) throw new Error('format tidak dikenali (DATA SKOR)');
+  var rows=json.table.rows,out=[];
+  for(var i=1;i<rows.length;i++){
+    var r=rows[i];
+    var up3=cellVal(r,2),ulp=cellVal(r,3);
+    if(up3===null||ulp===null) continue;
     out.push({
-      monthKey: cellVal(r, 0),
-      monthLabel: cellVal(r, 1),
-      up3: String(up3),
-      ulp: String(ulp),
-      frontliner: cellVal(r,4),
-      security:   cellVal(r,5),
-      yantek:     cellVal(r,6),
-      billman:    cellVal(r,7),
-      p2tl:       cellVal(r,8),
-      yanbung:    cellVal(r,9)
+      monthKey:cellVal(r,0),monthLabel:cellVal(r,1),
+      up3:String(up3),ulp:String(ulp),
+      frontliner:cellVal(r,4),security:cellVal(r,5),yantek:cellVal(r,6),
+      billman:cellVal(r,7),p2tl:cellVal(r,8),yanbung:cellVal(r,9)
     });
   }
   return out;
 }
 
-var ID_MONTHS = {
-  'JANUARI':1,'FEBRUARI':2,'MARET':3,'APRIL':4,'MEI':5,'JUNI':6,
-  'JULI':7,'AGUSTUS':8,'SEPTEMBER':9,'OKTOBER':10,'NOVEMBER':11,'DESEMBER':12
-};
+var ID_MONTHS={JANUARI:1,FEBRUARI:2,MARET:3,APRIL:4,MEI:5,JUNI:6,JULI:7,AGUSTUS:8,SEPTEMBER:9,OKTOBER:10,NOVEMBER:11,DESEMBER:12};
 function labelToMonthKey(label){
-  var m = String(label).trim().toUpperCase().match(/^([A-Z]+)\s+(\d{4})$/);
-  if(!m || !ID_MONTHS[m[1]]) return null;
-  return Number(m[2]) * 100 + ID_MONTHS[m[1]];
+  var m=String(label).trim().toUpperCase().match(/^([A-Z]+)\s+(\d{4})$/);
+  if(!m||!ID_MONTHS[m[1]]) return null;
+  return Number(m[2])*100+ID_MONTHS[m[1]];
 }
-
-// Daftar bulan mengikuti persis isi dropdown data-validation di sel C5 sheet REKAP SKOR
-// (Agustus s.d. Desember 2026). Ini dibaca sekali dari struktur sheet saat file ini dibuat —
-// gviz (fetch live) tidak bisa membaca aturan data-validation, jadi daftar ini perlu
-// disesuaikan manual kalau nanti dropdown C5 diperluas (mis. ke tahun 2027).
-var FIXED_PERIOD_LABELS = ['AGUSTUS 2026','SEPTEMBER 2026','OKTOBER 2026','NOVEMBER 2026','DESEMBER 2026'];
+var FIXED_PERIOD_LABELS=['AGUSTUS 2026','SEPTEMBER 2026','OKTOBER 2026','NOVEMBER 2026','DESEMBER 2026'];
 
 function buildMonthList(dataSkorRows){
-  var list = FIXED_PERIOD_LABELS.map(function(label){
-    return { key: labelToMonthKey(label), label: label };
-  });
-  var known = {};
-  list.forEach(function(m){ known[m.key] = true; });
-
-  // jaga-jaga: kalau ada baris DATA SKOR dengan bulan di luar daftar tetap di atas
-  // (mis. daftar C5 diperluas tapi kode ini belum diupdate), tetap tampilkan juga.
-  var extra = {};
+  var list=FIXED_PERIOD_LABELS.map(function(label){ return {key:labelToMonthKey(label),label:label}; });
+  var known={};
+  list.forEach(function(m){ known[m.key]=true; });
+  var extra={};
   dataSkorRows.forEach(function(r){
-    if(r.monthKey === null || known[r.monthKey]) return;
-    extra[r.monthKey] = r.monthLabel || String(r.monthKey);
+    if(r.monthKey===null||known[r.monthKey]) return;
+    extra[r.monthKey]=r.monthLabel||String(r.monthKey);
   });
-  Object.keys(extra).forEach(function(k){
-    list.push({ key: isNaN(Number(k))?k:Number(k), label: extra[k] });
-  });
-
-  list.sort(function(a,b){ return (a.key>b.key)?1:(a.key<b.key?-1:0); }); // asc, kronologis
+  Object.keys(extra).forEach(function(k){ list.push({key:isNaN(Number(k))?k:Number(k),label:extra[k]}); });
+  list.sort(function(a,b){ return a.key>b.key?1:a.key<b.key?-1:0; });
   return list;
 }
 
-function defaultMonthKey(monthList, dataSkorRows){
-  var withData = {};
-  dataSkorRows.forEach(function(r){ if(r.monthKey!==null) withData[r.monthKey] = true; });
-  var candidates = monthList.filter(function(m){ return withData[m.key]; });
-  if(candidates.length) return String(candidates[candidates.length-1].key); // paling baru yang sudah ada datanya
-  return monthList.length ? String(monthList[0].key) : '';
+function defaultMonthKey(monthList,dataSkorRows){
+  var withData={};
+  dataSkorRows.forEach(function(r){ if(r.monthKey!==null) withData[r.monthKey]=true; });
+  var cands=monthList.filter(function(m){ return withData[m.key]; });
+  if(cands.length) return String(cands[cands.length-1].key);
+  return monthList.length?String(monthList[0].key):'';
 }
 
-// Gabungkan skeleton (daftar tetap 92 unit) dengan baris DATA SKOR untuk 1 bulan tertentu.
 function buildGroupsForMonth(monthKey){
-  var lookup = {};
+  var lookup={};
   state.dataSkorRows.forEach(function(r){
-    if(String(r.monthKey) !== String(monthKey)) return;
-    lookup[normKey(r.up3) + '|' + normKey(r.ulp)] = r;
+    if(String(r.monthKey)!==String(monthKey)) return;
+    lookup[normKey(r.up3)+'|'+normKey(r.ulp)]=r;
   });
-
   return state.skeleton.map(function(g){
-    return {
-      name: g.name,
-      units: g.units.map(function(u){
-        var row = lookup[normKey(g.name) + '|' + normKey(u.name)];
-        if(!row){
-          return { name: u.name, frontliner:null, security:null, yantek:null, billman:null, p2tl:null, yanbung:null, avg:null, status:null };
-        }
-        var vals = [row.frontliner,row.security,row.yantek,row.billman,row.p2tl,row.yanbung]
-          .filter(function(v){ return v!==null && v!==''; }).map(Number);
-        var avg = vals.length ? (vals.reduce(function(s,v){return s+v;},0)/vals.length) : null;
-        return {
-          name: u.name,
-          frontliner: row.frontliner, security: row.security, yantek: row.yantek,
-          billman: row.billman, p2tl: row.p2tl, yanbung: row.yanbung,
-          avg: avg, status: avg===null ? null : starsForScore(avg)
-        };
-      })
-    };
+    return {name:g.name,units:g.units.map(function(u){
+      var row=lookup[normKey(g.name)+'|'+normKey(u.name)];
+      if(!row) return {name:u.name,frontliner:null,security:null,yantek:null,billman:null,p2tl:null,yanbung:null,avg:null,status:null};
+      var vals=[row.frontliner,row.security,row.yantek,row.billman,row.p2tl,row.yanbung].filter(function(v){return v!==null&&v!=='';}).map(Number);
+      var avg=vals.length?(vals.reduce(function(s,v){return s+v;},0)/vals.length):null;
+      return {name:u.name,frontliner:row.frontliner,security:row.security,yantek:row.yantek,billman:row.billman,p2tl:row.p2tl,yanbung:row.yanbung,avg:avg,status:avg===null?null:starsForScore(avg)};
+    })};
   });
 }
 
-// ============ DERIVED STATS ============
-function flattenUnits(groups){
-  var out = [];
-  groups.forEach(function(g){
-    g.units.forEach(function(u){ out.push({group:g.name, unit:u}); });
-  });
-  return out;
-}
-
-function scopedGroups(){
-  if(!state.activeUp3) return state.groups;
-  return state.groups.filter(function(g){ return g.name === state.activeUp3; });
-}
+function flattenUnits(groups){ var out=[]; groups.forEach(function(g){ g.units.forEach(function(u){ out.push({group:g.name,unit:u}); }); }); return out; }
+function scopedGroups(){ if(!state.activeUp3) return state.groups; return state.groups.filter(function(g){ return g.name===state.activeUp3; }); }
 
 function computeStats(groups){
-  var flat = flattenUnits(groups);
-  var filled = flat.filter(function(x){ return x.unit.avg !== null && x.unit.avg !== ''; });
-  var totalUnits = flat.length;
-  var avgAll = filled.length ? (filled.reduce(function(s,x){return s+Number(x.unit.avg);},0) / filled.length) : null;
-
-  var baik=0, cukup=0, kurang=0;
-  filled.forEach(function(x){
-    var v = Number(x.unit.avg);
-    if(v >= 90) baik++;
-    else if(v >= 80) cukup++;
-    else kurang++;
-  });
-  var belum = totalUnits - filled.length;
-
-  var aspectAvg = {};
+  var flat=flattenUnits(groups);
+  var filled=flat.filter(function(x){ return x.unit.avg!==null&&x.unit.avg!==''; });
+  var totalUnits=flat.length;
+  var avgAll=filled.length?(filled.reduce(function(s,x){return s+Number(x.unit.avg);},0)/filled.length):null;
+  var baik=0,cukup=0,kurang=0;
+  filled.forEach(function(x){ var v=Number(x.unit.avg); if(v>=90) baik++; else if(v>=80) cukup++; else kurang++; });
+  var belum=totalUnits-filled.length;
+  var aspectAvg={};
   ASPECTS.forEach(function(a){
-    var vals = flat.map(function(x){ return x.unit[a.key]; }).filter(function(v){ return v !== null && v !== ''; });
-    aspectAvg[a.key] = vals.length ? (vals.reduce(function(s,v){return s+Number(v);},0)/vals.length) : null;
+    var vals=flat.map(function(x){ return x.unit[a.key]; }).filter(function(v){ return v!==null&&v!==''; });
+    aspectAvg[a.key]=vals.length?(vals.reduce(function(s,v){return s+Number(v);},0)/vals.length):null;
   });
-
-  return {
-    totalUnits: totalUnits, filledCount: filled.length, avgAll: avgAll,
-    baik: baik, cukup: cukup, kurang: kurang, belum: belum,
-    aspectAvg: aspectAvg
-  };
+  return {totalUnits:totalUnits,filledCount:filled.length,avgAll:avgAll,baik:baik,cukup:cukup,kurang:kurang,belum:belum,aspectAvg:aspectAvg};
 }
 
-// Sesuai formula STATUS di sheet REKAP SKOR (J9): ≥90 ★★★★★, ≥85 ★★★★, ≥80 ★★★, ≥70 ★★, <70 ★.
-// Pengelompokan warna diminta: ★/★★ = hitam, ★★★/★★★★ = kuning, ★★★★★ = hijau.
-function scoreBand(v){
-  if(v === null || v === '' || typeof v === 'undefined') return 'na';
-  var n = Number(v);
-  if(n >= 90) return 'hi';   // ★★★★★
-  if(n >= 80) return 'mid';  // ★★★ / ★★★★
-  return 'lo';               // ★ / ★★
-}
+function scoreBand(v){ if(v===null||v===''||typeof v==='undefined') return 'na'; var n=Number(v); if(n>=90) return 'hi'; if(n>=80) return 'mid'; return 'lo'; }
+function fmtScore(v){ if(v===null||v===''||typeof v==='undefined') return '–'; return (Math.round(Number(v)*10)/10).toString(); }
+function starsForScore(v){ var n=Number(v); if(n>=90) return '★★★★★'; if(n>=85) return '★★★★'; if(n>=80) return '★★★'; if(n>=70) return '★★'; return '★'; }
+function escapeHtml(s){ return String(s).replace(/[&<>"']/g,function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
 
-function fmt1(v){
-  if(v === null || v === '' || typeof v === 'undefined') return '–';
-  return Number(v).toFixed(1).replace(/\.0$/, function(m){ return m; }) === Number(v).toFixed(1) ? Number(v).toFixed(1) : Number(v).toFixed(1);
-}
-function fmtScore(v){
-  if(v === null || v === '' || typeof v === 'undefined') return '–';
-  var n = Number(v);
-  return (Math.round(n*10)/10).toString();
-}
-
-// ============ RENDER: KPI ============
 function renderKPIs(){
-  var groups = scopedGroups();
-  var stats = computeStats(groups);
-  var target = stats.totalUnits;
-  var realisasi = stats.filledCount;
-
-  document.getElementById('kpiTarget').textContent = (target === null || typeof target === 'undefined') ? '–' : target;
+  var groups=scopedGroups(),stats=computeStats(groups);
+  var target=stats.totalUnits,realisasi=stats.filledCount;
+  document.getElementById('kpiTarget').textContent=target===null?'–':target;
   document.getElementById('kpiTarget').classList.remove('skeleton');
-  document.getElementById('kpiTargetDesc').textContent = state.activeUp3 ? ('Unit dalam ' + state.activeUp3) : 'Jumlah unit dalam cakupan';
-
-  document.getElementById('kpiRealisasi').innerHTML = (realisasi === null ? '–' : realisasi) + ' <span style="font-size:13px;color:var(--muted);font-weight:600;">/ ' + (target===null?'–':target) + '</span>';
+  document.getElementById('kpiTargetDesc').textContent=state.activeUp3?('Unit dalam '+state.activeUp3):'Jumlah unit dalam cakupan';
+  document.getElementById('kpiRealisasi').innerHTML=(realisasi===null?'–':realisasi)+' <span style="font-size:13px;color:var(--muted);font-weight:600;">/ '+(target===null?'–':target)+'</span>';
   document.getElementById('kpiRealisasi').classList.remove('skeleton');
-  var pct = (target && realisasi !== null) ? Math.round((realisasi/target)*100) : null;
-  document.getElementById('kpiRealisasiDesc').innerHTML = pct === null ? '&nbsp;' : ('<span class="down">▼ Baru ' + pct + '% unit terisi</span>');
-
-  document.getElementById('kpiAvg').textContent = stats.avgAll === null ? '–' : fmtScore(stats.avgAll);
+  var pct=(target&&realisasi!==null)?Math.round((realisasi/target)*100):null;
+  document.getElementById('kpiRealisasiDesc').innerHTML=pct===null?'&nbsp;':('<span class="down">▼ Baru '+pct+'% unit terisi</span>');
+  document.getElementById('kpiAvg').textContent=stats.avgAll===null?'–':fmtScore(stats.avgAll);
   document.getElementById('kpiAvg').classList.remove('skeleton');
-  document.getElementById('kpiAvgDesc').innerHTML = stats.filledCount ? ('<span class="up">▲</span> dari ' + stats.filledCount + ' unit yang sudah terisi') : 'Belum ada unit terisi';
-
-  document.getElementById('kpiTop').textContent = stats.baik;
+  document.getElementById('kpiAvgDesc').innerHTML=stats.filledCount?('<span class="up">▲</span> dari '+stats.filledCount+' unit yang sudah terisi'):'Belum ada unit terisi';
+  document.getElementById('kpiTop').textContent=stats.baik;
   document.getElementById('kpiTop').classList.remove('skeleton');
-  document.getElementById('kpiTopDesc').textContent = stats.filledCount ? ('dari ' + stats.filledCount + ' unit yang sudah dinilai') : 'dari 0 unit yang sudah dinilai';
+  document.getElementById('kpiTopDesc').textContent=stats.filledCount?('dari '+stats.filledCount+' unit yang sudah dinilai'):'dari 0 unit';
+  document.getElementById('tabBadgePS4').textContent=stats.avgAll!==null?('Avg '+fmtScore(stats.avgAll)):'Self Assessment';
 }
 
-// ============ RENDER: TABLE ============
 function renderTable(){
-  var tbody = document.getElementById('tableBody');
-  tbody.innerHTML = '';
-  var groups = scopedGroups();
-
-  if(state.sortKey && state.sortKey !== 'name'){
-    var flat = flattenUnits(groups);
+  var tbody=document.getElementById('tableBody');
+  tbody.innerHTML='';
+  var groups=scopedGroups();
+  if(state.sortKey&&state.sortKey!=='name'){
+    var flat=flattenUnits(groups);
     flat.sort(function(a,b){
-      var va = a.unit[state.sortKey], vb = b.unit[state.sortKey];
-      var na = (va === null || va === '') ? -Infinity : Number(va);
-      var nb = (vb === null || vb === '') ? -Infinity : Number(vb);
-      return state.sortDir === 'asc' ? (na-nb) : (nb-na);
+      var va=a.unit[state.sortKey],vb=b.unit[state.sortKey];
+      var na=(va===null||va==='')?-Infinity:Number(va);
+      var nb=(vb===null||vb==='')?-Infinity:Number(vb);
+      return state.sortDir==='asc'?(na-nb):(nb-na);
     });
-    flat.forEach(function(x){
-      tbody.appendChild(buildUnitRow(x.unit, x.group, true));
-    });
+    flat.forEach(function(x){ tbody.appendChild(buildUnitRow(x.unit,x.group,true)); });
     return;
   }
-
   groups.forEach(function(g){
-    var filled = g.units.filter(function(u){ return u.avg !== null && u.avg !== ''; });
-    var groupAvg = filled.length ? (filled.reduce(function(s,u){return s+Number(u.avg);},0)/filled.length) : null;
-    var band = scoreBand(groupAvg);
-
-    var tr = document.createElement('tr');
-    tr.className = 'up3row';
-    tr.innerHTML = '<td class="unit-name">' + escapeHtml(g.name) + '</td>' +
-      '<td colspan="6"></td>' +
-      '<td>' + (groupAvg===null ? '<span class="score s-na">–</span>' : '<span class="score s-'+band+'">'+fmtScore(groupAvg)+'</span>') + '</td>' +
-      '<td class="stars ' + (groupAvg===null?'na':band) + '">' + (groupAvg===null?'–':starsForScore(groupAvg)) + '</td>';
+    var filled=g.units.filter(function(u){ return u.avg!==null&&u.avg!==''; });
+    var groupAvg=filled.length?(filled.reduce(function(s,u){return s+Number(u.avg);},0)/filled.length):null;
+    var band=scoreBand(groupAvg);
+    var tr=document.createElement('tr');
+    tr.className='up3row';
+    tr.innerHTML='<td class="unit-name">'+escapeHtml(g.name)+'</td><td colspan="6"></td><td>'+(groupAvg===null?'<span class="score s-na">–</span>':'<span class="score s-'+band+'">'+fmtScore(groupAvg)+'</span>')+'</td><td class="stars '+(groupAvg===null?'na':band)+'">'+(groupAvg===null?'–':starsForScore(groupAvg))+'</td>';
     tbody.appendChild(tr);
-
-    g.units.forEach(function(u){
-      tbody.appendChild(buildUnitRow(u, g.name, false));
-    });
+    g.units.forEach(function(u){ tbody.appendChild(buildUnitRow(u,g.name,false)); });
   });
 }
 
-function starsForScore(v){
-  var n = Number(v);
-  if(n>=90) return '★★★★★';
-  if(n>=85) return '★★★★';
-  if(n>=80) return '★★★';
-  if(n>=70) return '★★';
-  return '★';
-}
-
-function buildUnitRow(u, groupName, showGroupPrefix){
-  var tr = document.createElement('tr');
-  var hasData = u.avg !== null && u.avg !== '';
-  var nameCell = showGroupPrefix
-    ? '<span style="color:var(--muted);">'+escapeHtml(groupName)+' › </span>'+escapeHtml(u.name)
-    : escapeHtml(u.name);
-
+function buildUnitRow(u,groupName,showGroupPrefix){
+  var tr=document.createElement('tr');
+  var hasData=u.avg!==null&&u.avg!=='';
+  var nameCell=showGroupPrefix?'<span style="color:var(--muted);">'+escapeHtml(groupName)+' › </span>'+escapeHtml(u.name):escapeHtml(u.name);
   if(!hasData){
-    tr.className = 'empty-row';
-    tr.innerHTML = '<td class="unit-name child">' + nameCell + '</td>' +
-      '<td colspan="6" style="color:#C3CCD6;">Belum ada input</td>' +
-      '<td><span class="score s-na">–</span></td>' +
-      '<td class="stars na">–</td>';
+    tr.className='empty-row';
+    tr.innerHTML='<td class="unit-name child">'+nameCell+'</td><td colspan="6" style="color:#C3CCD6;">Belum ada input</td><td><span class="score s-na">–</span></td><td class="stars na">–</td>';
     return tr;
   }
-
-  function cell(v){
-    var b = scoreBand(v);
-    return v===null||v===''? '<span class="score s-na">–</span>' : '<span class="score s-'+b+'">'+fmtScore(v)+'</span>';
-  }
-  var avgBand = scoreBand(u.avg);
-  tr.innerHTML = '<td class="unit-name child">' + nameCell + '</td>' +
-    '<td>'+cell(u.frontliner)+'</td>' +
-    '<td>'+cell(u.security)+'</td>' +
-    '<td>'+cell(u.yantek)+'</td>' +
-    '<td>'+cell(u.billman)+'</td>' +
-    '<td>'+cell(u.p2tl)+'</td>' +
-    '<td>'+cell(u.yanbung)+'</td>' +
-    '<td><span class="score s-'+avgBand+'">'+fmtScore(u.avg)+'</span></td>' +
-    '<td class="stars '+avgBand+'">'+(u.status || starsForScore(u.avg))+'</td>';
+  function cell(v){ var b=scoreBand(v); return v===null||v===''?'<span class="score s-na">–</span>':'<span class="score s-'+b+'">'+fmtScore(v)+'</span>'; }
+  var avgBand=scoreBand(u.avg);
+  tr.innerHTML='<td class="unit-name child">'+nameCell+'</td><td>'+cell(u.frontliner)+'</td><td>'+cell(u.security)+'</td><td>'+cell(u.yantek)+'</td><td>'+cell(u.billman)+'</td><td>'+cell(u.p2tl)+'</td><td>'+cell(u.yanbung)+'</td><td><span class="score s-'+avgBand+'">'+fmtScore(u.avg)+'</span></td><td class="stars '+avgBand+'">'+(u.status||starsForScore(u.avg))+'</td>';
   return tr;
 }
 
-function escapeHtml(s){
-  return String(s).replace(/[&<>"']/g, function(c){
-    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
-  });
-}
-
-// ============ RENDER: BAR CHART ============
 function renderBarChart(){
-  var groups = scopedGroups();
-  var stats = computeStats(groups);
-  var wrap = document.getElementById('barChart');
-  wrap.innerHTML = '';
+  var groups=scopedGroups(),stats=computeStats(groups),wrap=document.getElementById('barChart');
+  wrap.innerHTML='';
   ASPECTS.forEach(function(a){
-    var v = stats.aspectAvg[a.key];
-    var pct = v === null ? 0 : Math.max(0, Math.min(100, v));
-    var row = document.createElement('div');
-    row.className = 'bar-row';
-    row.innerHTML = '<div class="bar-label">'+a.label+'</div>' +
-      '<div class="bar-track"><div class="bar-fill" style="width:'+pct+'%;"></div></div>' +
-      '<div class="bar-val">'+(v===null?'–':fmtScore(v))+'</div>';
+    var v=stats.aspectAvg[a.key],pct=v===null?0:Math.max(0,Math.min(100,v));
+    var row=document.createElement('div'); row.className='bar-row';
+    row.innerHTML='<div class="bar-label">'+a.label+'</div><div class="bar-track"><div class="bar-fill" style="width:'+pct+'%;"></div></div><div class="bar-val">'+(v===null?'–':fmtScore(v))+'</div>';
     wrap.appendChild(row);
   });
 }
 
-// ============ RENDER: DONUT ============
 function renderDonut(){
-  var groups = scopedGroups();
-  var stats = computeStats(groups);
-  var total = stats.totalUnits || 1;
-  var segs = [
-    {label:'★★★★★ (≥90)', count: stats.baik, color:'#1D9A6C'},
-    {label:'★★★ / ★★★★ (80–89)', count: stats.cukup, color:'#E0A100'},
-    {label:'★ / ★★ (<80)', count: stats.kurang, color:'#1B1B1B'},
-    {label:'Belum dinilai', count: stats.belum, color:'#C3CCD6'}
-  ];
-
-  var svg = document.getElementById('donutSvg');
-  var circles = '<circle cx="21" cy="21" r="15.9" fill="transparent" stroke="#EEF1F5" stroke-width="6"></circle>';
-  var offsetAcc = 25; // start similar to mockup
+  var groups=scopedGroups(),stats=computeStats(groups),total=stats.totalUnits||1;
+  var segs=[{label:'★★★★★ (≥90)',count:stats.baik,color:'#1D9A6C'},{label:'★★★/★★★★ (80–89)',count:stats.cukup,color:'#E0A100'},{label:'★/★★ (<80)',count:stats.kurang,color:'#1B1B1B'},{label:'Belum dinilai',count:stats.belum,color:'#C3CCD6'}];
+  var svg=document.getElementById('donutSvg'),circles='<circle cx="21" cy="21" r="15.9" fill="transparent" stroke="#EEF1F5" stroke-width="6"></circle>';
+  var offsetAcc=25;
   segs.forEach(function(s){
-    var frac = s.count / total;
-    var dash = Math.max(0, frac*100);
-    circles += '<circle cx="21" cy="21" r="15.9" fill="transparent" stroke="'+s.color+'" stroke-width="6" ' +
-      'stroke-dasharray="'+dash.toFixed(2)+' '+(100-dash).toFixed(2)+'" stroke-dashoffset="'+offsetAcc.toFixed(2)+'" stroke-linecap="butt"></circle>';
-    offsetAcc -= dash;
+    var frac=s.count/total,dash=Math.max(0,frac*100);
+    circles+='<circle cx="21" cy="21" r="15.9" fill="transparent" stroke="'+s.color+'" stroke-width="6" stroke-dasharray="'+dash.toFixed(2)+' '+(100-dash).toFixed(2)+'" stroke-dashoffset="'+offsetAcc.toFixed(2)+'" stroke-linecap="butt"></circle>';
+    offsetAcc-=dash;
   });
-  svg.innerHTML = circles;
-
-  var legend = document.getElementById('donutLegend');
-  legend.innerHTML = '';
-  segs.forEach(function(s){
-    var div = document.createElement('div');
-    div.innerHTML = '<span class="dot" style="background:'+s.color+';"></span>'+s.label+' — '+s.count+' unit';
-    legend.appendChild(div);
-  });
+  svg.innerHTML=circles;
+  var legend=document.getElementById('donutLegend');
+  legend.innerHTML='';
+  segs.forEach(function(s){ var div=document.createElement('div'); div.innerHTML='<span class="dot" style="background:'+s.color+';"></span>'+s.label+' — '+s.count+' unit'; legend.appendChild(div); });
 }
 
-// ============ RENDER: RINGKASAN PER UP3 (selalu semua UP3, tidak ikut filter UP3 di atas) ============
 function up3SummaryRows(){
-  // sengaja pakai state.groups (bukan scopedGroups()) supaya tabel ini tidak ikut filter UP3
   return state.groups.map(function(g){
-    var filled = g.units.filter(function(u){ return u.avg !== null && u.avg !== ''; });
-    var avg = filled.length ? (filled.reduce(function(s,u){return s+Number(u.avg);},0)/filled.length) : null;
-
-    var row = {
-      name: g.name,
-      realisasi: filled.length,
-      total: g.units.length,
-      avg: avg,
-      status: avg===null ? null : starsForScore(avg)
-    };
-
+    var filled=g.units.filter(function(u){ return u.avg!==null&&u.avg!==''; });
+    var avg=filled.length?(filled.reduce(function(s,u){return s+Number(u.avg);},0)/filled.length):null;
+    var row={name:g.name,realisasi:filled.length,total:g.units.length,avg:avg,status:avg===null?null:starsForScore(avg)};
     ASPECTS.forEach(function(a){
-      var vals = g.units.map(function(u){ return u[a.key]; }).filter(function(v){ return v !== null && v !== ''; });
-      row[a.key] = vals.length ? (vals.reduce(function(s,v){return s+Number(v);},0)/vals.length) : null;
+      var vals=g.units.map(function(u){ return u[a.key]; }).filter(function(v){ return v!==null&&v!==''; });
+      row[a.key]=vals.length?(vals.reduce(function(s,v){return s+Number(v);},0)/vals.length):null;
     });
-
     return row;
   });
 }
 
 function renderUp3Summary(){
-  var rows = up3SummaryRows();
-
+  var rows=up3SummaryRows();
   if(state.up3SortKey){
-    var key = state.up3SortKey, dir = state.up3SortDir;
+    var key=state.up3SortKey,dir=state.up3SortDir;
     rows.sort(function(a,b){
-      if(key === 'name'){
-        return dir==='asc' ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name);
-      }
-      var va = a[key]===null ? -Infinity : Number(a[key]);
-      var vb = b[key]===null ? -Infinity : Number(b[key]);
-      return dir==='asc' ? (va-vb) : (vb-va);
+      if(key==='name') return dir==='asc'?a.name.localeCompare(b.name):b.name.localeCompare(a.name);
+      var va=a[key]===null?-Infinity:Number(a[key]),vb=b[key]===null?-Infinity:Number(b[key]);
+      return dir==='asc'?(va-vb):(vb-va);
     });
   }
-
-  var tbody = document.getElementById('up3SummaryBody');
-  tbody.innerHTML = '';
+  var tbody=document.getElementById('up3SummaryBody');
+  tbody.innerHTML='';
   rows.forEach(function(r){
-    var band = scoreBand(r.avg);
-    var aspectCells = ASPECTS.map(function(a){
-      var v = r[a.key];
-      var b = scoreBand(v);
-      return '<td>' + (v===null ? '<span class="score s-na">–</span>' : '<span class="score s-'+b+'">'+fmtScore(v)+'</span>') + '</td>';
-    }).join('');
-    var shortName = r.name.replace(/^UP3\s+/i, '');
-    var tr = document.createElement('tr');
-    tr.innerHTML = '<td class="unit-name" title="' + escapeHtml(r.name) + '">' + escapeHtml(shortName) + '</td>' +
-      '<td>' + r.realisasi + ' <span style="color:var(--muted);">/ ' + r.total + '</span></td>' +
-      aspectCells +
-      '<td>' + (r.avg===null ? '<span class="score s-na">–</span>' : '<span class="score s-'+band+'">'+fmtScore(r.avg)+'</span>') + '</td>' +
-      '<td class="stars ' + (r.avg===null?'na':band) + '">' + (r.avg===null?'–':r.status) + '</td>';
+    var band=scoreBand(r.avg);
+    var aspectCells=ASPECTS.map(function(a){ var v=r[a.key],b=scoreBand(v); return '<td>'+(v===null?'<span class="score s-na">–</span>':'<span class="score s-'+b+'">'+fmtScore(v)+'</span>')+'</td>'; }).join('');
+    var shortName=r.name.replace(/^UP3\s+/i,'');
+    var tr=document.createElement('tr');
+    tr.innerHTML='<td class="unit-name" title="'+escapeHtml(r.name)+'">'+escapeHtml(shortName)+'</td><td>'+r.realisasi+' <span style="color:var(--muted);">/ '+r.total+'</span></td>'+aspectCells+'<td>'+(r.avg===null?'<span class="score s-na">–</span>':'<span class="score s-'+band+'">'+fmtScore(r.avg)+'</span>')+'</td><td class="stars '+(r.avg===null?'na':band)+'">'+(r.avg===null?'–':r.status)+'</td>';
     tbody.appendChild(tr);
   });
-
   updateUp3SummarySortIndicator();
 }
 
 function updateUp3SummarySortIndicator(){
-  var ths = document.querySelectorAll('#up3SummaryHead th');
-  ths.forEach(function(th){
-    var key = th.getAttribute('data-key');
-    var base = th.textContent.replace(/[▲▼]\s*$/,'').trim();
-    if(key === state.up3SortKey){
-      th.innerHTML = base + ' <span class="arrow">'+(state.up3SortDir==='asc'?'▲':'▼')+'</span>';
-    } else {
-      th.textContent = base;
-    }
+  document.querySelectorAll('#up3SummaryHead th').forEach(function(th){
+    var key=th.getAttribute('data-key'),base=th.textContent.replace(/[▲▼]\s*$/,'').trim();
+    th.innerHTML=key===state.up3SortKey?base+' <span class="arrow">'+(state.up3SortDir==='asc'?'▲':'▼')+'</span>':base;
   });
 }
 
-// ============ RENDER: FILTERS (UP3 & Bulan) ============
 function renderFilterOptions(){
-  var sel = document.getElementById('up3Filter');
-  var current = state.activeUp3;
-  sel.innerHTML = '<option value="">Semua UP3</option>';
-  state.up3List.forEach(function(name){
-    var opt = document.createElement('option');
-    opt.value = name; opt.textContent = name;
-    sel.appendChild(opt);
-  });
-  sel.value = current || '';
-
-  var bsel = document.getElementById('bulanFilter');
-  if(!state.monthList.length){
-    bsel.innerHTML = '<option value="">Belum ada data bulan</option>';
-    return;
-  }
-  bsel.innerHTML = '';
-  state.monthList.forEach(function(m){
-    var opt = document.createElement('option');
-    opt.value = String(m.key); opt.textContent = m.label;
-    bsel.appendChild(opt);
-  });
-  bsel.value = String(state.activeMonth);
+  var sel=document.getElementById('up3Filter'),current=state.activeUp3;
+  sel.innerHTML='<option value="">Semua UP3</option>';
+  state.up3List.forEach(function(name){ var opt=document.createElement('option'); opt.value=name; opt.textContent=name; sel.appendChild(opt); });
+  sel.value=current||'';
+  var bsel=document.getElementById('bulanFilter');
+  if(!state.monthList.length){ bsel.innerHTML='<option value="">Belum ada data bulan</option>'; return; }
+  bsel.innerHTML='';
+  state.monthList.forEach(function(m){ var opt=document.createElement('option'); opt.value=String(m.key); opt.textContent=m.label; bsel.appendChild(opt); });
+  bsel.value=String(state.activeMonth);
 }
 
-// ============ RENDER: TREND (per bulan, dari data riil sheet) ============
 function buildMonthlyTrend(){
   return state.monthList.map(function(m){
-    var groups = buildGroupsForMonth(m.key);
-    if(state.activeUp3){
-      groups = groups.filter(function(g){ return g.name === state.activeUp3; });
-    }
-    var stats = computeStats(groups);
-    return {
-      key: m.key,
-      label: m.label,
-      avg: stats.avgAll
-    };
+    var groups=buildGroupsForMonth(m.key);
+    if(state.activeUp3) groups=groups.filter(function(g){ return g.name===state.activeUp3; });
+    var stats=computeStats(groups);
+    return {key:m.key,label:m.label,avg:stats.avgAll};
   });
 }
 
 function renderTrend(monthly){
-  var svg = document.getElementById('trendSvg');
-  var caption = document.getElementById('trendCaption');
-  var W = 1100, H = 130, padL=44, padR=40, padT=20, padB=30;
-  var innerH = H - padT - padB;
-
-  if(!monthly || monthly.length === 0){
-    svg.innerHTML = '';
-    caption.textContent = 'Belum ada data bulan untuk ditampilkan.';
-    return;
-  }
-
-  var n = monthly.length;
-  var stepX = n > 1 ? (W-padL-padR) / (n-1) : 0;
-  var xs = monthly.map(function(m,i){ return n>1 ? (padL + i*stepX) : (W/2); });
-  function yFor(v){ return padT + innerH * (1 - (Math.max(0,Math.min(100,v)))/100); }
-
-  var lines = '<line x1="0" y1="'+(padT)+'" x2="'+W+'" y2="'+(padT)+'" stroke="#EEF1F5"></line>' +
-    '<line x1="0" y1="'+(padT+innerH/2)+'" x2="'+W+'" y2="'+(padT+innerH/2)+'" stroke="#EEF1F5"></line>' +
-    '<line x1="0" y1="'+(H-padB)+'" x2="'+W+'" y2="'+(H-padB)+'" stroke="#EEF1F5"></line>';
-
-  function buildPolyline(getVal, color){
-    var segs = [], current = [];
-    monthly.forEach(function(m,i){
-      var v = getVal(m);
-      if(v === null || typeof v === 'undefined'){
-        if(current.length){ segs.push(current); current = []; }
-        return;
-      }
-      current.push(xs[i].toFixed(1)+','+yFor(v).toFixed(1));
-    });
-    if(current.length) segs.push(current);
-    return segs.map(function(seg){
-      return '<polyline fill="none" stroke="'+color+'" stroke-width="3" points="'+seg.join(' ')+'"></polyline>';
-    }).join('');
-  }
-
-  lines += buildPolyline(function(m){ return m.avg===null?null:Number(m.avg); }, '#0F2A47');
-
+  var svg=document.getElementById('trendSvg'),caption=document.getElementById('trendCaption');
+  var W=1100,H=130,padL=44,padR=40,padT=20,padB=30,innerH=H-padT-padB;
+  if(!monthly||!monthly.length){ svg.innerHTML=''; caption.textContent='Belum ada data bulan.'; return; }
+  var n=monthly.length,stepX=n>1?(W-padL-padR)/(n-1):0;
+  var xs=monthly.map(function(m,i){ return n>1?(padL+i*stepX):(W/2); });
+  function yFor(v){ return padT+innerH*(1-(Math.max(0,Math.min(100,v)))/100); }
+  var lines='<line x1="0" y1="'+padT+'" x2="'+W+'" y2="'+padT+'" stroke="#EEF1F5"></line><line x1="0" y1="'+(padT+innerH/2)+'" x2="'+W+'" y2="'+(padT+innerH/2)+'" stroke="#EEF1F5"></line><line x1="0" y1="'+(H-padB)+'" x2="'+W+'" y2="'+(H-padB)+'" stroke="#EEF1F5"></line>';
+  var segs=[],cur=[];
+  monthly.forEach(function(m,i){ if(m.avg===null){ if(cur.length){ segs.push(cur); cur=[]; } return; } cur.push(xs[i].toFixed(1)+','+yFor(m.avg).toFixed(1)); });
+  if(cur.length) segs.push(cur);
+  segs.forEach(function(seg){ lines+='<polyline fill="none" stroke="#0F2A47" stroke-width="3" points="'+seg.join(' ')+'"></polyline>'; });
   monthly.forEach(function(m,i){
-    var x = xs[i];
-    if(m.avg !== null){
-      lines += '<circle cx="'+x.toFixed(1)+'" cy="'+yFor(m.avg).toFixed(1)+'" r="4" fill="#0F2A47"></circle>';
-    } else {
-      lines += '<circle cx="'+x.toFixed(1)+'" cy="'+(H-padB).toFixed(1)+'" r="3" fill="#C7D0DA"></circle>';
-    }
-    var shortLabel = String(m.label).split(' ')[0].slice(0,3);
-    lines += '<text x="'+(x-12).toFixed(1)+'" y="122" font-size="11" fill="#6B7A8D">'+shortLabel+'</text>';
+    var x=xs[i];
+    if(m.avg!==null) lines+='<circle cx="'+x.toFixed(1)+'" cy="'+yFor(m.avg).toFixed(1)+'" r="4" fill="#0F2A47"></circle>';
+    else lines+='<circle cx="'+x.toFixed(1)+'" cy="'+(H-padB).toFixed(1)+'" r="3" fill="#C7D0DA"></circle>';
+    var sl=String(m.label).split(' ')[0].slice(0,3);
+    lines+='<text x="'+(x-12).toFixed(1)+'" y="122" font-size="11" fill="#6B7A8D">'+sl+'</text>';
   });
-
-  svg.innerHTML = lines;
-
-  var scopeLabel = state.activeUp3 ? (' — ' + state.activeUp3) : ' — semua UP3';
-  var withData = monthly.filter(function(m){ return m.avg !== null; });
-  if(!withData.length){
-    caption.innerHTML = 'Belum ada data skor untuk bulan manapun' + scopeLabel + '.';
-  } else {
-    var last = withData[withData.length-1];
-    caption.innerHTML = 'Tren skor rata-rata per bulan' + scopeLabel + ' (' + monthly.length + ' bulan). Bulan terakhir dengan data: ' + last.label + ' (skor ' + fmtScore(last.avg) + ').';
-  }
+  svg.innerHTML=lines;
+  var scopeLabel=state.activeUp3?(' — '+state.activeUp3):' — semua UP3';
+  var withData=monthly.filter(function(m){ return m.avg!==null; });
+  if(!withData.length){ caption.innerHTML='Belum ada data skor'+scopeLabel+'.'; }
+  else { var last=withData[withData.length-1]; caption.innerHTML='Tren skor rata-rata per bulan'+scopeLabel+'. Terakhir: '+last.label+' ('+fmtScore(last.avg)+').'; }
 }
 
-// ============ MAIN RENDER ============
 function renderAll(){
   renderFilterOptions();
   renderKPIs();
@@ -1026,169 +843,383 @@ function renderAll(){
 }
 
 function updateSortNote(){
-  document.getElementById('sortResetNote').style.display = state.sortKey && state.sortKey!=='name' ? 'inline-block' : 'none';
-  var ths = document.querySelectorAll('#tableHeadRow th');
-  ths.forEach(function(th){
-    var key = th.getAttribute('data-key');
-    var base = th.textContent.replace(/[▲▼]\s*$/,'').trim();
-    if(key === state.sortKey){
-      th.innerHTML = base + ' <span class="arrow">'+(state.sortDir==='asc'?'▲':'▼')+'</span>';
-    } else {
-      th.textContent = base;
-    }
+  document.getElementById('sortResetNote').style.display=state.sortKey&&state.sortKey!=='name'?'inline-block':'none';
+  document.querySelectorAll('#tableHeadRow th').forEach(function(th){
+    var key=th.getAttribute('data-key'),base=th.textContent.replace(/[▲▼]\s*$/,'').trim();
+    th.innerHTML=key===state.sortKey?base+' <span class="arrow">'+(state.sortDir==='asc'?'▲':'▼')+'</span>':base;
   });
 }
 
-function resetSort(){
-  state.sortKey = null;
-  renderTable();
-  updateSortNote();
-}
+function resetSort(){ state.sortKey=null; renderTable(); updateSortNote(); }
 
-// ============ EXPORT PDF (pilih bagian yang disertakan) ============
-function toggleExportPopup(){
-  document.getElementById('exportPopup').classList.toggle('show');
-}
-function closeExportPopup(){
-  document.getElementById('exportPopup').classList.remove('show');
-}
+function toggleExportPopup(){ document.getElementById('exportPopup').classList.toggle('show'); }
+function closeExportPopup(){ document.getElementById('exportPopup').classList.remove('show'); }
 function confirmExportPdf(){
   document.querySelectorAll('.exportChk').forEach(function(chk){
-    var el = document.getElementById(chk.getAttribute('data-target'));
-    if(el) el.classList.toggle('print-hide', !chk.checked);
+    var el=document.getElementById(chk.getAttribute('data-target'));
+    if(el) el.classList.toggle('print-hide',!chk.checked);
   });
   closeExportPopup();
   window.print();
 }
-// tutup popup kalau klik di luar area popup/tombolnya
-document.addEventListener('click', function(e){
-  var popup = document.getElementById('exportPopup');
-  if(!popup || !popup.classList.contains('show')) return;
-  if(e.target.closest('#exportPopup') || e.target.closest('#exportPdfBtn')) return;
+document.addEventListener('click',function(e){
+  var popup=document.getElementById('exportPopup');
+  if(!popup||!popup.classList.contains('show')) return;
+  if(e.target.closest('#exportPopup')||e.target.closest('#exportPdfBtn')) return;
   popup.classList.remove('show');
 });
 
-// ============ EVENTS ============
-document.getElementById('up3Filter').addEventListener('change', function(e){
-  state.activeUp3 = e.target.value;
-  renderKPIs(); renderTable(); renderBarChart(); renderDonut();
-  renderTrend(buildMonthlyTrend());
+document.getElementById('up3Filter').addEventListener('change',function(e){
+  state.activeUp3=e.target.value;
+  renderKPIs(); renderTable(); renderBarChart(); renderDonut(); renderTrend(buildMonthlyTrend());
 });
-
-document.getElementById('bulanFilter').addEventListener('change', function(e){
-  state.activeMonth = e.target.value;
-  state.groups = buildGroupsForMonth(state.activeMonth);
+document.getElementById('bulanFilter').addEventListener('change',function(e){
+  state.activeMonth=e.target.value;
+  state.groups=buildGroupsForMonth(state.activeMonth);
   updateSubLabel();
   renderKPIs(); renderTable(); renderBarChart(); renderDonut(); renderUp3Summary();
 });
-
-document.getElementById('up3SummaryHead').addEventListener('click', function(e){
-  var th = e.target.closest('th');
-  if(!th) return;
-  var key = th.getAttribute('data-key');
-  if(state.up3SortKey === key){
-    state.up3SortDir = state.up3SortDir === 'desc' ? 'asc' : 'desc';
-  } else {
-    state.up3SortKey = key;
-    state.up3SortDir = key === 'name' ? 'asc' : 'desc';
-  }
+document.getElementById('up3SummaryHead').addEventListener('click',function(e){
+  var th=e.target.closest('th'); if(!th) return;
+  var key=th.getAttribute('data-key');
+  if(state.up3SortKey===key){ state.up3SortDir=state.up3SortDir==='desc'?'asc':'desc'; }
+  else { state.up3SortKey=key; state.up3SortDir=key==='name'?'asc':'desc'; }
   renderUp3Summary();
 });
-
-document.getElementById('tableHeadRow').addEventListener('click', function(e){
-  var th = e.target.closest('th');
-  if(!th) return;
-  var key = th.getAttribute('data-key');
-  if(key === 'name'){ resetSort(); return; }
-  if(state.sortKey === key){
-    state.sortDir = state.sortDir === 'desc' ? 'asc' : 'desc';
-  } else {
-    state.sortKey = key;
-    state.sortDir = 'desc';
-  }
-  renderTable();
-  updateSortNote();
+document.getElementById('tableHeadRow').addEventListener('click',function(e){
+  var th=e.target.closest('th'); if(!th) return;
+  var key=th.getAttribute('data-key');
+  if(key==='name'){ resetSort(); return; }
+  if(state.sortKey===key){ state.sortDir=state.sortDir==='desc'?'asc':'desc'; }
+  else { state.sortKey=key; state.sortDir='desc'; }
+  renderTable(); updateSortNote();
 });
 
-// ============ LOAD CYCLE ============
-var lastRefreshedAt = null;
-
+var lastRefreshedAt=null;
 function updateSubLabel(){
-  var monthObj = state.monthList.filter(function(m){ return String(m.key) === String(state.activeMonth); })[0];
-  var label = monthObj ? monthObj.label : '-';
-  document.getElementById('subLabel').textContent =
-    'Periode: ' + label +
-    (lastRefreshedAt ? (' • Terakhir disegarkan: ' + lastRefreshedAt.toLocaleTimeString('id-ID')) : '');
+  var monthObj=state.monthList.filter(function(m){ return String(m.key)===String(state.activeMonth); })[0];
+  var label=monthObj?monthObj.label:'-';
+  document.getElementById('subLabel').textContent='Periode: '+label+(lastRefreshedAt?(' • Terakhir disegarkan: '+lastRefreshedAt.toLocaleTimeString('id-ID')):'');
 }
 
-var refreshing = false;
+var refreshing=false;
 function loadData(isManual){
   if(refreshing) return;
-  refreshing = true;
-  var btn = document.getElementById('refreshBtn');
-  btn.disabled = true;
-  btn.innerHTML = '<span class="spin">⟳</span> Memuat…';
-
-  var results = {};
-  var errors = [];
-  var pending = 2;
-
+  refreshing=true;
+  var btn=document.getElementById('refreshBtn');
+  btn.disabled=true; btn.innerHTML='<span class="spin">⟳</span> Memuat…';
+  var results={},errors=[],pending=2;
   function finish(){
     pending--;
-    if(pending > 0) return;
-    // both fetches settled
-    if(errors.length){
-      showError(errors[0]);
-    } else {
+    if(pending>0) return;
+    if(errors.length){ showError(errors[0]); }
+    else {
       try{
-        state.skeleton = results.skeleton;
-        state.dataSkorRows = results.dataSkor;
-        state.up3List = state.skeleton.map(function(g){ return g.name; });
-        state.monthList = buildMonthList(state.dataSkorRows);
-
-        // pertahankan bulan aktif kalau masih valid, kalau tidak pilih otomatis
-        // (bulan terbaru yang sudah ada datanya; kalau belum ada sama sekali, bulan pertama di daftar)
-        var stillExists = state.monthList.some(function(m){ return String(m.key) === String(state.activeMonth); });
-        if(!state.activeMonth || !stillExists){
-          state.activeMonth = defaultMonthKey(state.monthList, state.dataSkorRows);
-        }
-        state.groups = buildGroupsForMonth(state.activeMonth);
-
+        state.skeleton=results.skeleton;
+        state.dataSkorRows=results.dataSkor;
+        state.up3List=state.skeleton.map(function(g){ return g.name; });
+        state.monthList=buildMonthList(state.dataSkorRows);
+        var stillExists=state.monthList.some(function(m){ return String(m.key)===String(state.activeMonth); });
+        if(!state.activeMonth||!stillExists) state.activeMonth=defaultMonthKey(state.monthList,state.dataSkorRows);
+        state.groups=buildGroupsForMonth(state.activeMonth);
         document.getElementById('errorBanner').classList.remove('show');
-        lastRefreshedAt = new Date();
+        lastRefreshedAt=new Date();
         updateSubLabel();
         renderAll();
-      }catch(err){
-        showError(err);
-      }
+      }catch(err){ showError(err); }
     }
-    refreshing = false;
-    btn.disabled = false;
-    btn.innerHTML = '⟳ Refresh';
+    refreshing=false;
+    btn.disabled=false; btn.innerHTML='⟳ Refresh';
   }
-
-  fetchSheetByName(SHEET_NAME_REKAP, function(json){
-    try{ results.skeleton = parseSkeleton(json); }
-    catch(err){ errors.push(err); }
-    finish();
-  }, function(err){ errors.push(err); finish(); });
-
-  fetchSheetByName(SHEET_NAME_DATA, function(json){
-    try{ results.dataSkor = parseDataSkor(json); }
-    catch(err){ errors.push(err); }
-    finish();
-  }, function(err){ errors.push(err); finish(); });
+  fetchSheetByName(SHEET_NAME_REKAP,function(json){ try{ results.skeleton=parseSkeleton(json); }catch(e){ errors.push(e); } finish(); },function(err){ errors.push(err); finish(); });
+  fetchSheetByName(SHEET_NAME_DATA,function(json){ try{ results.dataSkor=parseDataSkor(json); }catch(e){ errors.push(e); } finish(); },function(err){ errors.push(err); finish(); });
 }
-
-function showError(err){
-  console.error(err);
-  document.getElementById('errorBanner').classList.add('show');
-}
-
+function showError(err){ console.error(err); document.getElementById('errorBanner').classList.add('show'); }
 function manualRefresh(){ loadData(true); }
 
 loadData(false);
 setInterval(function(){ loadData(false); }, AUTO_REFRESH_MS);
+</script>
+
+<!-- ============================================================
+     SURVEY LOKET SCRIPT
+     ============================================================ -->
+<script>
+(function(){
+  var SL_SHEET_ID   = '1HOyBCxJdXfOBsTyBeAmLwxJpX8VUh_2YOkweL4pfwVw';
+  var SL_DATA_SHEET = 'SURVEY LOKET';
+  var SL_MON_SHEET  = 'MONITORING';
+  var SL_TIMEOUT_MS = 15000;
+
+  var SL_ASPECTS = [
+    {key:'kecSec', label:'Kecepatan Security'},
+    {key:'kerSec', label:'Keramahan Security'},
+    {key:'kecLok', label:'Kecepatan Loket'},
+    {key:'ketLok', label:'Ketepatan Loket'},
+    {key:'kerLok', label:'Keramahan Loket'}
+  ];
+
+  var slState = { rows:[], masterGroups:{}, loaded:false, loading:false };
+
+  function fetchSLSheet(sheetName, rangeStr, onData, onError){
+    var cbName='slGviz_'+Math.floor(Math.random()*1e9),done=false;
+    var script=document.createElement('script');
+    var timer=setTimeout(function(){ if(done) return; done=true; cleanup(); onError(new Error('timeout: '+sheetName)); },SL_TIMEOUT_MS);
+    function cleanup(){ clearTimeout(timer); try{ delete window[cbName]; }catch(e){ window[cbName]=undefined; } if(script.parentNode) script.parentNode.removeChild(script); }
+    window[cbName]=function(json){ if(done) return; done=true; cleanup(); onData(json); };
+    script.onerror=function(){ if(done) return; done=true; cleanup(); onError(new Error('load err: '+sheetName)); };
+    script.src='https://docs.google.com/spreadsheets/d/'+SL_SHEET_ID+'/gviz/tq'
+      +'?sheet='+encodeURIComponent(sheetName)+'&range='+(rangeStr||'A1:Z2000')+'&headers=0'
+      +'&tqx=out:json;responseHandler:'+cbName+'&_ts='+Date.now();
+    document.body.appendChild(script);
+  }
+
+  function parseLoketData(json){
+    if(!json||!json.table||!json.table.rows) return [];
+    var rows=json.table.rows,out=[],startIdx=1;
+    if(rows.length>0){ var tv=cellVal(rows[0],3); if(tv!==null&&typeof tv==='number') startIdx=0; }
+    for(var i=startIdx;i<rows.length;i++){
+      var r=rows[i],up3=cellVal(r,0),ulp=cellVal(r,1),bln=cellVal(r,2);
+      if(!up3||!ulp||!bln) continue;
+      out.push({
+        up3:String(up3).trim(),ulp:String(ulp).trim(),bulan:String(bln).trim(),
+        n:Number(cellVal(r,3)||0),
+        kecSec:cellVal(r,4),kerSec:cellVal(r,5),kecLok:cellVal(r,6),ketLok:cellVal(r,7),kerLok:cellVal(r,8),
+        rata2:cellVal(r,9)
+      });
+    }
+    return out;
+  }
+
+  function parseMonitoringMaster(json){
+    if(!json||!json.table||!json.table.rows) return {};
+    var rows=json.table.rows,groups={},curUp3=null;
+    for(var i=0;i<rows.length;i++){
+      var colA=String(cellVal(rows[i],0)||'').trim(),colB=String(cellVal(rows[i],1)||'').trim();
+      var entity=colB||colA; if(!entity) continue;
+      var eUp=entity.toUpperCase();
+      if(eUp.indexOf('UP3')===0){ curUp3=entity; if(!groups[curUp3]) groups[curUp3]=[]; }
+      else if(eUp.indexOf('ULP')===0){
+        if(!curUp3){ var fa=colA.toUpperCase().indexOf('UP3')===0?colA:'Lainnya'; if(!groups[fa]) groups[fa]=[]; curUp3=fa; }
+        groups[curUp3].push(entity);
+      }
+    }
+    return groups;
+  }
+
+  function normBulan(s){ return String(s||'').trim().toUpperCase().replace(/\s+/g,' '); }
+
+  function isValidEntry(up3,ulp){
+    var keys=Object.keys(slState.masterGroups);
+    if(!keys.length) return true;
+    var nUp3=normKey(up3);
+    for(var ki=0;ki<keys.length;ki++){
+      if(normKey(keys[ki])===nUp3){
+        var lst=slState.masterGroups[keys[ki]],nUlp=normKey(ulp);
+        for(var li=0;li<lst.length;li++){ if(normKey(lst[li])===nUlp) return true; }
+        return false;
+      }
+    }
+    return false;
+  }
+
+  function getActiveBulanLabel(){
+    if(state.monthList&&state.monthList.length&&state.activeMonth){
+      for(var i=0;i<state.monthList.length;i++){
+        if(String(state.monthList[i].key)===String(state.activeMonth)) return state.monthList[i].label;
+      }
+    }
+    var bsel=document.getElementById('bulanFilter');
+    if(bsel&&bsel.selectedIndex>=0&&bsel.options[bsel.selectedIndex]) return bsel.options[bsel.selectedIndex].text;
+    return '';
+  }
+
+  function getFilteredRows(forTrend){
+    var bulanLabel=forTrend?null:normBulan(getActiveBulanLabel());
+    var activeUp3=document.getElementById('up3Filter').value;
+    return slState.rows.filter(function(r){
+      if(!isValidEntry(r.up3,r.ulp)) return false;
+      if(activeUp3&&normKey(r.up3)!==normKey(activeUp3)) return false;
+      if(!forTrend&&bulanLabel&&normBulan(r.bulan)!==bulanLabel) return false;
+      return true;
+    });
+  }
+
+  function slFmt(v){
+    if(v===null||v===''||typeof v==='undefined') return '–';
+    return (Math.round(Number(v)*100)/100).toFixed(2);
+  }
+
+  function renderSLBanner(){
+    var activeUp3=document.getElementById('up3Filter').value;
+    document.getElementById('slBannerScope').textContent=activeUp3||'Semua UP3';
+    document.getElementById('slBannerSub').textContent='Periode: '+(getActiveBulanLabel()||'–');
+    var up3Keys=Object.keys(slState.masterGroups),up3Count,ulpCount;
+    if(activeUp3){
+      up3Count=1; ulpCount=0;
+      for(var k in slState.masterGroups){ if(normKey(k)===normKey(activeUp3)){ ulpCount=slState.masterGroups[k].length; break; } }
+    } else {
+      up3Count=up3Keys.length; ulpCount=0;
+      up3Keys.forEach(function(k){ ulpCount+=slState.masterGroups[k].length; });
+    }
+    var allValid=slState.rows.filter(function(r){
+      if(!isValidEntry(r.up3,r.ulp)) return false;
+      if(activeUp3&&normKey(r.up3)!==normKey(activeUp3)) return false;
+      return true;
+    });
+    var totalN=allValid.reduce(function(s,r){ return s+(r.n||0); },0);
+    document.getElementById('slChipResponden').textContent=totalN.toLocaleString('id-ID')+' Responden';
+    document.getElementById('slChipUnits').textContent=up3Count+' UP3 · '+ulpCount+' ULP';
+    var rows=getFilteredRows(false);
+    var avgVals=rows.map(function(r){ return r.rata2; }).filter(function(v){ return v!==null&&v!==''; }).map(Number);
+    var avgAll=avgVals.length?avgVals.reduce(function(s,v){return s+v;},0)/avgVals.length:null;
+    document.getElementById('tabBadgeSL').textContent=avgAll!==null?('Avg '+slFmt(avgAll)):'Survey Pelanggan';
+  }
+
+  function renderSLKPIs(){
+    var rows=getFilteredRows(false);
+    var totalN=rows.reduce(function(s,r){ return s+(r.n||0); },0);
+    var avgVals=rows.map(function(r){ return r.rata2; }).filter(function(v){ return v!==null&&v!==''; }).map(Number);
+    var avgAll=avgVals.length?avgVals.reduce(function(s,v){return s+v;},0)/avgVals.length:null;
+    var countSB=avgVals.filter(function(v){ return v>=4.5; }).length;
+    var countPer=avgVals.filter(function(v){ return v<3.5; }).length;
+
+    var avEl=document.getElementById('slKpiAvg');
+    avEl.textContent=avgAll===null?'–':slFmt(avgAll);
+    avEl.classList.remove('skeleton');
+    var avDesc=document.getElementById('slKpiAvgDesc');
+    if(avgAll!==null){
+      var cls=avgAll>=4.5?'sl-sb':(avgAll>=4?'sl-b':(avgAll>=3?'sl-c':'sl-k'));
+      var lbl=avgAll>=4.5?'SANGAT BAIK':(avgAll>=4?'BAIK':(avgAll>=3?'CUKUP':'KURANG'));
+      avDesc.innerHTML='<span class="sl-score-badge '+cls+'">'+lbl+'</span>';
+    } else { avDesc.textContent='Belum ada data'; }
+
+    var nEl=document.getElementById('slKpiN');
+    nEl.textContent=totalN.toLocaleString('id-ID'); nEl.classList.remove('skeleton');
+    document.getElementById('slKpiNDesc').textContent=rows.length+' ULP tercakup';
+
+    var sbEl=document.getElementById('slKpiSB');
+    sbEl.textContent=countSB; sbEl.classList.remove('skeleton');
+    document.getElementById('slKpiSBDesc').textContent='dari '+avgVals.length+' ULP terisi';
+
+    var kEl=document.getElementById('slKpiK');
+    kEl.textContent=countPer; kEl.classList.remove('skeleton');
+    document.getElementById('slKpiKDesc').textContent='skor rata-rata < 3.5';
+  }
+
+  function renderSLBars(){
+    var rows=getFilteredRows(false),wrap=document.getElementById('slBarChart');
+    wrap.innerHTML='';
+    SL_ASPECTS.forEach(function(a){
+      var vals=rows.map(function(r){ return r[a.key]; }).filter(function(v){ return v!==null&&v!==''; }).map(Number);
+      var avg=vals.length?vals.reduce(function(s,v){return s+v;},0)/vals.length:null;
+      var pct=avg===null?0:Math.max(0,Math.min(100,(avg/5)*100));
+      var row=document.createElement('div'); row.className='bar-row';
+      row.innerHTML='<div class="bar-label" style="width:140px;font-size:11px;">'+a.label+'</div><div class="bar-track"><div class="bar-fill" style="width:'+pct+'%;background:var(--purple);"></div></div><div class="bar-val" style="font-size:11px;color:var(--purple);">'+(avg===null?'–':slFmt(avg))+'</div>';
+      wrap.appendChild(row);
+    });
+  }
+
+  function renderSLTrend(){
+    var activeUp3=document.getElementById('up3Filter').value;
+    var rows=getFilteredRows(true);
+    var svgEl=document.getElementById('slTrendSvg'),capEl=document.getElementById('slTrendCaption'),descEl=document.getElementById('slTrendDesc');
+    if(!rows.length){ svgEl.innerHTML=''; capEl.textContent='Belum ada data tren.'; return; }
+
+    var ID_MO={JANUARI:1,FEBRUARI:2,MARET:3,APRIL:4,MEI:5,JUNI:6,JULI:7,AGUSTUS:8,SEPTEMBER:9,OKTOBER:10,NOVEMBER:11,DESEMBER:12};
+    var bulanMap={},bulanOrder={};
+    rows.forEach(function(r){
+      var bKey=normBulan(r.bulan);
+      if(!bulanMap[bKey]){ bulanMap[bKey]={label:r.bulan,vals:[],n:0}; var m2=bKey.match(/^([A-Z]+)\s+(\d{4})$/); bulanOrder[bKey]=m2?(Number(m2[2])*100+(ID_MO[m2[1]]||0)):0; }
+      if(r.rata2!==null&&r.rata2!=='') bulanMap[bKey].vals.push(Number(r.rata2));
+      bulanMap[bKey].n+=(r.n||0);
+    });
+    var monthly=Object.keys(bulanMap).sort(function(a,b){ return bulanOrder[a]-bulanOrder[b]; }).map(function(k){
+      var g=bulanMap[k],avg=g.vals.length?g.vals.reduce(function(s,v){return s+v;},0)/g.vals.length:null;
+      return {label:g.label,bKey:k,avg:avg,n:g.n};
+    });
+    if(!monthly.length){ svgEl.innerHTML=''; capEl.textContent='Belum ada data tren.'; return; }
+
+    var W=560,H=130,padL=46,padR=22,padT=18,padB=28,innerW=W-padL-padR,innerH=H-padT-padB;
+    var n=monthly.length,stepX=n>1?innerW/(n-1):0;
+    var allAvgs=monthly.map(function(m){return m.avg;}).filter(function(v){return v!==null;});
+    var yMin=3.0,yMax=5.05;
+    if(allAvgs.length){ yMin=Math.max(0,Math.min(3.0,Math.min.apply(null,allAvgs)-0.3)); yMax=Math.min(5.05,Math.max(5.0,Math.max.apply(null,allAvgs)+0.2)); }
+    function xFor(i){ return padL+(n>1?i*stepX:innerW/2); }
+    function yFor(v){ return padT+innerH*(1-(v-yMin)/(yMax-yMin)); }
+
+    var svg='';
+    [3.0,3.5,4.0,4.5,5.0].forEach(function(tick){
+      if(tick<yMin||tick>yMax) return;
+      var y=yFor(tick).toFixed(1);
+      svg+='<line x1="'+padL+'" y1="'+y+'" x2="'+(W-padR)+'" y2="'+y+'" stroke="#EEF1F5" stroke-width="1"/>';
+      svg+='<text x="'+(padL-4)+'" y="'+(Number(y)+3)+'" font-size="8.5" fill="#6B7A8D" text-anchor="end">'+tick.toFixed(1)+'</text>';
+    });
+    if(yMin<=4.5&&yMax>=4.5){
+      var yT=yFor(4.5).toFixed(1);
+      svg+='<line x1="'+padL+'" y1="'+yT+'" x2="'+(W-padR)+'" y2="'+yT+'" stroke="var(--purple)" stroke-width="1.5" stroke-dasharray="5,3" opacity="0.45"/>';
+    }
+    var pts=[];
+    monthly.forEach(function(m,i){ if(m.avg!==null) pts.push(xFor(i).toFixed(1)+','+yFor(m.avg).toFixed(1)); });
+    if(pts.length>1) svg+='<polyline fill="none" stroke="var(--purple)" stroke-width="2.5" stroke-linejoin="round" points="'+pts.join(' ')+'"/>';
+    monthly.forEach(function(m,i){
+      var x=xFor(i).toFixed(1);
+      if(m.avg!==null){ var y=yFor(m.avg).toFixed(1); svg+='<circle cx="'+x+'" cy="'+y+'" r="4" fill="var(--purple)"/>'; svg+='<text x="'+x+'" y="'+(Number(y)-7)+'" font-size="8" fill="var(--purple)" text-anchor="middle">'+slFmt(m.avg)+'</text>'; }
+      else svg+='<circle cx="'+x+'" cy="'+(padT+innerH/2)+'" r="3" fill="#DDD6FE"/>';
+      var sl=String(m.label).split(' ')[0].slice(0,3);
+      svg+='<text x="'+x+'" y="'+(H-padB+13)+'" font-size="8.5" fill="#6B7A8D" text-anchor="middle">'+sl+'</text>';
+    });
+    svgEl.innerHTML=svg;
+    var scopeLbl=activeUp3?' untuk '+activeUp3:' (semua UP3)';
+    descEl.textContent='Rata-rata skor bulanan'+scopeLbl+' · garis putus = target 4.5';
+    var withData=monthly.filter(function(m){return m.avg!==null;});
+    if(withData.length){ var last=withData[withData.length-1]; capEl.textContent=monthly.length+' bulan data'+scopeLbl+' · terakhir: '+last.label+' ('+slFmt(last.avg)+')'; }
+    else capEl.textContent='Belum ada data tren'+scopeLbl+'.';
+  }
+
+  // Expose ke global
+  window.renderSLAll = function(){
+    if(!slState.loaded) return;
+    renderSLBanner();
+    renderSLKPIs();
+    renderSLBars();
+    renderSLTrend();
+  };
+  window.slState = slState;
+
+  function loadSLData(){
+    if(slState.loading) return; slState.loading=true;
+    var results={},pending=2;
+    function finish(){
+      pending--;
+      if(pending>0) return;
+      slState.rows=results.loket||[];
+      slState.masterGroups=results.monitor||{};
+      slState.loaded=true; slState.loading=false;
+      tryRenderSL();
+    }
+    fetchSLSheet(SL_DATA_SHEET,'A1:J2000',function(json){ try{ results.loket=parseLoketData(json); }catch(e){ results.loket=[]; } finish(); },function(){ results.loket=[]; finish(); });
+    fetchSLSheet(SL_MON_SHEET,'A1:B500',function(json){ try{ results.monitor=parseMonitoringMaster(json); }catch(e){ results.monitor={}; } finish(); },function(){ results.monitor={}; finish(); });
+  }
+
+  function tryRenderSL(){
+    if(!slState.loaded) return;
+    if(!state.monthList||!state.monthList.length||!state.activeMonth){ setTimeout(tryRenderSL,300); return; }
+    // Render badge meskipun tab tidak aktif; render full hanya jika tab SL aktif
+    renderSLBanner(); // update badge di tab button
+    if(activeTab==='sl') renderSLAll();
+  }
+
+  // Event listeners tambahan (tidak menggantikan PS4 punya)
+  document.getElementById('up3Filter').addEventListener('change',function(){
+    if(slState.loaded&&activeTab==='sl') renderSLAll();
+  });
+  document.getElementById('bulanFilter').addEventListener('change',function(){
+    if(slState.loaded&&activeTab==='sl') renderSLAll();
+  });
+
+  loadSLData();
+})();
 </script>
 </body>
 </html>
